@@ -1,33 +1,33 @@
 package router
 
 import (
-	"net/http"
-	"time"
+    "net/http"
+    "time"
 
-	"github.com/gin-gonic/gin"
-	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/trace"
-	"golang.org/x/net/context"
+    "github.com/gin-gonic/gin"
+    "go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
+    "go.opentelemetry.io/otel"
+    "go.opentelemetry.io/otel/trace"
+    "golang.org/x/net/context"
 
-	"git.onepay.vn/onepay/ddsp/common/config"
-	wspGoService "git.onepay.vn/onepay/ddsp/wsp-go/service"
+    "github.com/tr299/good_shoes/common/config"
+    productService "github.com/tr299/good_shoes/product/service"
 )
 
 type Server struct {
-	config config.Config
-	//psp-connector    psp-connector.Connector
-	srv    *http.Server
-	router *gin.Engine
-	//receiptMaker ReceiptMaker
-	lstLoginImie map[string]LoginImie
+    config config.Config
+    //psp-connector    psp-connector.Connector
+    srv    *http.Server
+    router *gin.Engine
+    //receiptMaker ReceiptMaker
+    lstLoginImie map[string]LoginImie
 }
 
 type LoginImie struct {
-	IMIE     string
-	IP       string
-	Number   int
-	LastDate time.Time
+    IMIE     string
+    IP       string
+    Number   int
+    LastDate time.Time
 }
 
 // Create one tracer per package
@@ -35,46 +35,46 @@ type LoginImie struct {
 var tracer trace.Tracer
 
 func init() {
-	// Name the tracer after the package, or the service if you are in main
-	tracer = otel.Tracer("git.onepay.vn/onepay/go/ddsp/router")
+    // Name the tracer after the package, or the service if you are in main
+    tracer = otel.Tracer("git.onepay.vn/onepay/go/ddsp/router")
 }
 
 // NewServer creates new server instance
 func NewServer(config config.Config) (*Server, error) {
-	server := &Server{
-		config:       config,
-		lstLoginImie: make(map[string]LoginImie),
-	}
+    server := &Server{
+        config:       config,
+        lstLoginImie: make(map[string]LoginImie),
+    }
 
-	//server.receiptMaker = receiptMaker
-	server.setupRoute()
+    //server.receiptMaker = receiptMaker
+    server.setupRoute()
 
-	server.srv = &http.Server{
-		Addr:    config.ServerAddress,
-		Handler: server.router,
-	}
+    server.srv = &http.Server{
+        Addr:    config.ServerAddress,
+        Handler: server.router,
+    }
 
-	return server, nil
+    return server, nil
 }
 
 func (server *Server) ListenAndServe() error {
-	return server.srv.ListenAndServe()
+    return server.srv.ListenAndServe()
 }
 
 func (server *Server) Shutdown(ctx context.Context) error {
-	return server.srv.Shutdown(ctx)
+    return server.srv.Shutdown(ctx)
 }
 
 func (server *Server) setupRoute() {
-	//gin.SetMode(gin.ReleaseMode)
-	router := gin.Default()
-	router.Use(otelgin.Middleware("wsp-go-router"))
+    //gin.SetMode(gin.ReleaseMode)
+    router := gin.Default()
+    router.Use(otelgin.Middleware("wsp-go-router"))
 
-	// wsp-go router
-	wspGoConfig := server.config.WspGoConfig
-	wspGoHandler, _ := wspGoService.NewHandler(&server.config, tracer)
-	router.POST(wspGoConfig.ApiPrefix+"/v1/merchants/:merchant_id/dd_tokens/:merch_token_ref", wspGoHandler.CreateRegisterToken)
-	router.GET(wspGoConfig.ApiPrefix+"/v1/merchants/:merchant_id/dd_tokens/:registration_id", wspGoHandler.GetRegisterToken)
+    // wsp-go router
+    wspGoConfig := server.config.WspGoConfig
+    wspGoHandler, _ := productService.NewHandler(&server.config, tracer)
+    router.POST(wspGoConfig.ApiPrefix+"/v1/merchants/:merchant_id/dd_tokens/:merch_token_ref", wspGoHandler.CreateRegisterToken)
+    router.GET(wspGoConfig.ApiPrefix+"/v1/merchants/:merchant_id/dd_tokens/:registration_id", wspGoHandler.GetRegisterToken)
 
-	server.router = router
+    server.router = router
 }

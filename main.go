@@ -1,7 +1,7 @@
 package main
 
-import "git.onepay.vn/onepay/ddsp/cmd"
+import "github.com/tr299/good_shoes/cmd"
 
 func main() {
-	cmd.Execute()
+    cmd.Execute()
 }
