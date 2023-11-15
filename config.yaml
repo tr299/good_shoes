@@ -1,0 +1,19 @@
+server:
+  address: ":8090"
+
+log:
+  level: "debug"
+  enable_trace: true
+  json_format: false
+
+tracer:
+  endpoint: http://localhost:14269/api/traces
+  environment: dev
+
+wsp-go:
+  base_url: "http://localhost/wsp-go/api/rest"
+  api_prefix: "wsp-go/api/rest"
+  timeout: 60000
+
+msp-go:
+  base_url: "http://localhost:8089/msp-go"
