@@ -9,10 +9,10 @@ import (
     "github.com/gin-gonic/gin"
     "go.opentelemetry.io/otel/trace"
 
-    "github.com/tr299/good_shoes/common/config"
-    "github.com/tr299/good_shoes/common/model/model_wsp"
-    "github.com/tr299/good_shoes/common/util"
-    "github.com/tr299/good_shoes/logger"
+    "good_shoes/common/config"
+    "good_shoes/common/model/model_wsp"
+    "good_shoes/common/util"
+    "good_shoes/logger"
 )
 
 type Handler struct {

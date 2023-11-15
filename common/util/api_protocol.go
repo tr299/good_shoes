@@ -14,7 +14,7 @@ import (
     "github.com/gin-gonic/gin"
     "github.com/sirupsen/logrus"
 
-    "github.com/tr299/good_shoes/logger"
+    "good_shoes/logger"
 )
 
 type Protocol interface {

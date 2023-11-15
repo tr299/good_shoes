@@ -3,17 +3,14 @@ package cmd
 import (
     "context"
     "net/http"
-    "os"
-    "os/signal"
     "syscall"
     "time"
 
-    _ "github.com/godror/godror"
+    "os"
+    "os/signal"
+
     _ "github.com/lib/pq"
     "github.com/spf13/cobra"
-    "github.com/tr299/good_shoes/common/config"
-    "github.com/tr299/good_shoes/logger"
-    "github.com/tr299/good_shoes/router"
     "go.opentelemetry.io/otel"
     "go.opentelemetry.io/otel/attribute"
     "go.opentelemetry.io/otel/exporters/jaeger"
@@ -21,6 +18,9 @@ import (
     "go.opentelemetry.io/otel/sdk/resource"
     tracesdk "go.opentelemetry.io/otel/sdk/trace"
     semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
+    "good_shoes/common/config"
+    "good_shoes/logger"
+    "good_shoes/router"
 )
 
 const (

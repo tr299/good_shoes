@@ -18,7 +18,7 @@ import (
     "github.com/google/uuid"
     "go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 
-    "github.com/tr299/good_shoes/logger"
+    "good_shoes/logger"
 )
 
 func SendResponse(c *gin.Context, status int, data any) {

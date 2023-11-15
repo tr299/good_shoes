@@ -1,6 +1,6 @@
 package main
 
-import "github.com/tr299/good_shoes/cmd"
+import "good_shoes/cmd"
 
 func main() {
     cmd.Execute()

@@ -2,15 +2,17 @@ module good_shoes
 
 go 1.21.4
 
+//replace (
+//	good_shoes => /home/trungtt/TrungTT-Data/good_shoes/
+//)
+
 require (
 	github.com/gin-gonic/gin v1.9.1
-	github.com/godror/godror v0.40.3
 	github.com/google/uuid v1.4.0
 	github.com/lib/pq v1.10.9
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.17.0
-	github.com/tr299/good_shoes v0.0.0-20231115173703-c8d72f909887
 	go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin v0.46.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.46.0
 	go.opentelemetry.io/otel v1.20.0
@@ -35,6 +37,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.14.0 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
+	github.com/godror/godror v0.40.3 // indirect
 	github.com/godror/knownpb v0.1.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect

@@ -10,8 +10,8 @@ import (
     "go.opentelemetry.io/otel/trace"
     "golang.org/x/net/context"
 
-    "github.com/tr299/good_shoes/common/config"
-    productService "github.com/tr299/good_shoes/product/service"
+    "good_shoes/common/config"
+    productService "good_shoes/product/service"
 )
 
 type Server struct {

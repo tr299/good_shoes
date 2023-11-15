@@ -3,7 +3,7 @@ package util
 import (
     "context"
 
-    "github.com/tr299/good_shoes/logger"
+    "good_shoes/logger"
 
     "github.com/gin-gonic/gin"
 )

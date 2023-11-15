@@ -3,7 +3,7 @@ package service
 import (
     "errors"
 
-    "github.com/tr299/good_shoes/common/model/model_wsp"
+    "good_shoes/common/model/model_wsp"
 )
 
 func validaCreateTokenRequest(req *model_wsp.CreateRegistrationTokenRequest) error {
