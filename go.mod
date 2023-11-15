@@ -1,6 +1,6 @@
 module good_shoes
 
-go 1.21.4
+go 1.21.3
 
 //replace (
 //	good_shoes => /home/trungtt/TrungTT-Data/good_shoes/
