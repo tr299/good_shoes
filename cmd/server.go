@@ -21,6 +21,8 @@ import (
     "good_shoes/common/config"
     "good_shoes/logger"
     "good_shoes/router"
+    "gorm.io/driver/sqlite"
+    "gorm.io/gorm"
 )
 
 const (
@@ -69,7 +71,8 @@ func runServerCommand(cmd *cobra.Command, args []string) {
         }
     }(ctx)
 
-    server := initializeServer(config)
+    dbConnections := initializeDbConnection(config)
+    server := initializeServer(config, dbConnections)
 
     logger.Debug("Start server")
     // Initializing the server in a goroutine so that
@@ -101,8 +104,8 @@ func runServerCommand(cmd *cobra.Command, args []string) {
     logger.Info("Server exiting")
 }
 
-func initializeServer(config config.Config) *router.Server {
-    server, err := router.NewServer(config)
+func initializeServer(config config.Config, database *gorm.DB) *router.Server {
+    server, err := router.NewServer(config, database)
     if err != nil {
         logger.Fatal("cannot create server:", err)
     }
@@ -144,4 +147,17 @@ func initializeTracerProvider(config config.TracerConfig) (*tracesdk.TracerProvi
     otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 
     return tp, nil
+}
+
+func initializeDbConnection(c config.Config) *gorm.DB {
+    logger.Info("start init database connections")
+
+    DbConn, err := gorm.Open(sqlite.Open(c.Database.Source), &gorm.Config{})
+    if err != nil {
+        logger.Error("connect to token database failed => ", err)
+    }
+
+    logger.Info("connect to token database successfully!")
+
+    return DbConn
 }

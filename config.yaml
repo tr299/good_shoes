@@ -10,10 +10,11 @@ tracer:
   endpoint: http://localhost:14269/api/traces
   environment: dev
 
-wsp-go:
-  base_url: "http://localhost/wsp-go/api/rest"
+database:
+  driver: "sqlite"
+  source: "../database.source"
+
+product:
+  base_url: "http://localhost/api"
   api_prefix: "wsp-go/api/rest"
   timeout: 60000
-
-msp-go:
-  base_url: "http://localhost:8089/msp-go"

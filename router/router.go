@@ -1,6 +1,7 @@
 package router
 
 import (
+    "gorm.io/gorm"
     "net/http"
     "time"
 
@@ -40,7 +41,7 @@ func init() {
 }
 
 // NewServer creates new server instance
-func NewServer(config config.Config) (*Server, error) {
+func NewServer(config config.Config, database *gorm.DB) (*Server, error) {
     server := &Server{
         config:       config,
         lstLoginImie: make(map[string]LoginImie),
@@ -68,13 +69,13 @@ func (server *Server) Shutdown(ctx context.Context) error {
 func (server *Server) setupRoute() {
     //gin.SetMode(gin.ReleaseMode)
     router := gin.Default()
-    router.Use(otelgin.Middleware("wsp-go-router"))
+    router.Use(otelgin.Middleware("router"))
 
-    // wsp-go router
-    wspGoConfig := server.config.WspGoConfig
-    wspGoHandler, _ := productService.NewHandler(&server.config, tracer)
-    router.POST(wspGoConfig.ApiPrefix+"/v1/merchants/:merchant_id/dd_tokens/:merch_token_ref", wspGoHandler.CreateRegisterToken)
-    router.GET(wspGoConfig.ApiPrefix+"/v1/merchants/:merchant_id/dd_tokens/:registration_id", wspGoHandler.GetRegisterToken)
+    // product router
+    productConfig := server.config.ProductConfig
+    productHandler, _ := productService.NewHandler(&server.config, tracer)
+    router.GET(productConfig.ApiPrefix+"/v1/products", productHandler.ListProduct)
+    router.GET(productConfig.ApiPrefix+"/v1/products/:product_id", productHandler.GetProduct)
 
     server.router = router
 }
