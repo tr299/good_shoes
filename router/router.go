@@ -16,10 +16,10 @@ import (
 )
 
 type Server struct {
-    config config.Config
-    //psp-connector    psp-connector.Connector
-    srv    *http.Server
-    router *gin.Engine
+    config   config.Config
+    database *gorm.DB
+    srv      *http.Server
+    router   *gin.Engine
     //receiptMaker ReceiptMaker
     lstLoginImie map[string]LoginImie
 }
@@ -44,6 +44,7 @@ func init() {
 func NewServer(config config.Config, database *gorm.DB) (*Server, error) {
     server := &Server{
         config:       config,
+        database:     database,
         lstLoginImie: make(map[string]LoginImie),
     }
 
@@ -73,7 +74,7 @@ func (server *Server) setupRoute() {
 
     // product router
     productConfig := server.config.ProductConfig
-    productHandler, _ := productService.NewHandler(&server.config, tracer)
+    productHandler, _ := productService.NewHandler(&server.config, server.database, tracer)
     router.GET(productConfig.ApiPrefix+"/v1/products", productHandler.ListProduct)
     router.GET(productConfig.ApiPrefix+"/v1/products/:product_id", productHandler.GetProduct)
 

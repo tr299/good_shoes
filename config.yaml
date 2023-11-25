@@ -16,5 +16,5 @@ database:
 
 product:
   base_url: "http://localhost/api"
-  api_prefix: "wsp-go/api/rest"
+  api_prefix: "/api"
   timeout: 60000
