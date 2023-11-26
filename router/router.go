@@ -75,8 +75,10 @@ func (server *Server) setupRoute() {
     // product router
     productConfig := server.config.ProductConfig
     productHandler, _ := productService.NewHandler(&server.config, server.database, tracer)
+    router.POST(productConfig.ApiPrefix+"/v1/products", productHandler.CreateProduct)
+    router.PUT(productConfig.ApiPrefix+"/v1/products/:id", productHandler.UpdateProduct)
     router.GET(productConfig.ApiPrefix+"/v1/products", productHandler.ListProduct)
-    router.GET(productConfig.ApiPrefix+"/v1/products/:product_id", productHandler.GetProduct)
+    router.GET(productConfig.ApiPrefix+"/v1/products/:id", productHandler.GetProduct)
 
     server.router = router
 }

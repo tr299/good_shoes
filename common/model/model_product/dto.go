@@ -33,7 +33,7 @@ type ProductModel struct {
 }
 
 func ConvertProductModelToProductResponse(o *ProductModel) *ProductItem {
-    return &ProductItem{
+    data := &ProductItem{
         Id:              o.Id,
         Sku:             o.Sku,
         Name:            o.Name,
@@ -47,11 +47,22 @@ func ConvertProductModelToProductResponse(o *ProductModel) *ProductItem {
         MultipleVariant: o.MultipleVariants,
         Category:        o.CategoryIds,
         Brand:           o.Brand,
-        CreatedAt:       o.CreatedAt.String(),
-        UpdatedAt:       o.UpdatedAt.String(),
-        DeletedAt:       o.DeletedAt.String(),
         Description:     o.Description,
         Description2:    o.Description2,
         ImageUrl:        o.ImageUrl,
     }
+
+    if nil != o.CreatedAt {
+        data.CreatedAt = o.CreatedAt.Format(time.RFC3339)
+    }
+
+    if nil != o.UpdatedAt {
+        data.UpdatedAt = o.UpdatedAt.Format(time.RFC3339)
+    }
+
+    if nil != o.DeletedAt {
+        data.DeletedAt = o.DeletedAt.Format(time.RFC3339)
+    }
+
+    return data
 }
