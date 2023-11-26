@@ -83,8 +83,8 @@ func prepareDataToUpdateProduct(req *model_product.UpdateProductRequest) *model_
         ImageUrl:         req.ImageUrl,
     }
 
-    createdAt := time.Now()
-    data.CreatedAt = &createdAt
+    updatedAt := time.Now()
+    data.UpdatedAt = &updatedAt
 
     return data
 }

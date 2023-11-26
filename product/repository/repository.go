@@ -32,7 +32,7 @@ func (r *Repository) CreateProduct(o *model_product.ProductModel) (*model_produc
 
 func (r *Repository) UpdateProduct(o *model_product.ProductModel) (*model_product.ProductModel, error) {
     query := r.db.Session(&gorm.Session{NewDB: true})
-    err := query.Table("products").Omit("id").Updates(o).Error
+    err := query.Table("products").Omit("id,created_at,deleted_at").Updates(o).Error
     if err != nil {
         logger.Error("repository update product failed: ", err)
         return nil, err

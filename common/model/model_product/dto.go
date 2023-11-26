@@ -18,13 +18,13 @@ type ProductModel struct {
     OptionValue      string
     Position         string
     Tags             string
-    Price            string
-    SalePrice        string
-    Cost             string
+    Price            float64
+    SalePrice        float64
+    Cost             float64
     CategoryIds      string
     CheckInventory   bool
     MultipleVariants bool
-    TotalQuantity    string
+    TotalQuantity    uint32
     Brand            string
     ImageUrl         string
     CreatedAt        *time.Time

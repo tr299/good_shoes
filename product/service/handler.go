@@ -88,6 +88,19 @@ func (h *Handler) UpdateProduct(c *gin.Context) {
 }
 
 func (h *Handler) ListProduct(c *gin.Context) {
+    newCtx := context.WithValue(c.Request.Context(), "Lang", c.Request.Header.Get(util.LanguageHeaderKey))
+    ctx, span := h.tracer.Start(newCtx, "ListProduct")
+    defer span.End()
+
+    req := &model_product.ListProductRequest{}
+
+    if err := util.BindRequest(ctx, c, req); nil != err {
+        c.JSON(http.StatusBadRequest, err)
+        return
+    }
+
+    logger.Infof("Enter GetProduct, data request = ", req)
+
     repo := repository.NewRepository(h.database)
     result, err := repo.ListProduct()
     if err != nil {

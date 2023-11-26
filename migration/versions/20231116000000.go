@@ -57,26 +57,26 @@ func Version20231116000000(tx *gorm.DB) error {
     }
 
     type Product struct {
-        Id               string `gorm:"TYPE:VARCHAR(100);NOT NULL;PRIMARY_KEY"`
-        IsVariant        bool   `gorm:"index:platform_external_idx,priority:2;TYPE:TINYINT(1);NOT NULL;default:0;"`
-        Sku              string `gorm:"TYPE:VARCHAR(255);"`
-        Name             string `gorm:"TYPE:VARCHAR(255);"`
-        Description      string `gorm:"TYPE:LONGTEXT;"`
-        Description2     string `gorm:"TYPE:LONGTEXT;"`
-        Status           string `gorm:"TYPE:VARCHAR(20);"`
-        Barcode          string `gorm:"TYPE:VARCHAR(255);"`
-        Type             string `gorm:"TYPE:VARCHAR(255);"`
-        OptionKey        string `gorm:"TYPE:VARCHAR(255);"`
-        OptionValue      string `gorm:"TYPE:VARCHAR(255);"`
-        Position         string `gorm:"TYPE:VARCHAR(255);"`
-        Tags             string `gorm:"TYPE:VARCHAR(255);"`
-        Price            string `gorm:"TYPE:varchar(50);NOT NULL;default:0;"`
-        SalePrice        string `gorm:"TYPE:varchar(50);"`
-        Cost             string `gorm:"TYPE:varchar(50);"`
-        CategoryIds      string `gorm:"TYPE:TEXT"`
+        Id               string  `gorm:"TYPE:VARCHAR(100);NOT NULL;PRIMARY_KEY"`
+        IsVariant        bool    `gorm:"index:platform_external_idx,priority:2;TYPE:TINYINT(1);NOT NULL;default:0;"`
+        Sku              string  `gorm:"TYPE:VARCHAR(255);"`
+        Name             string  `gorm:"TYPE:VARCHAR(255);"`
+        Description      string  `gorm:"TYPE:LONGTEXT;"`
+        Description2     string  `gorm:"TYPE:LONGTEXT;"`
+        Status           string  `gorm:"TYPE:VARCHAR(20);"`
+        Barcode          string  `gorm:"TYPE:VARCHAR(255);"`
+        Type             string  `gorm:"TYPE:VARCHAR(255);"`
+        OptionKey        string  `gorm:"TYPE:VARCHAR(255);"`
+        OptionValue      string  `gorm:"TYPE:VARCHAR(255);"`
+        Position         string  `gorm:"TYPE:VARCHAR(255);"`
+        Tags             string  `gorm:"TYPE:VARCHAR(255);"`
+        Price            float64 `gorm:"TYPE:DECIMAL(20,4)"`
+        SalePrice        float64 `gorm:"TYPE:DECIMAL(20,4)"`
+        Cost             float64 `gorm:"TYPE:DECIMAL(20,4)"`
+        CategoryIds      string  `gorm:"TYPE:TEXT"`
         CheckInventory   bool
         MultipleVariants bool
-        TotalQuantity    string `gorm:"TYPE:VARCHAR(100);"`
+        TotalQuantity    uint32 `gorm:"TYPE:INT;"`
         Brand            string `gorm:"TYPE:VARCHAR(100);"`
         ImageUrl         string `gorm:"TYPE:LONGTEXT;"`
         CreatedAt        *time.Time
