@@ -53,6 +53,29 @@ func (h *Handler) CreateProduct(c *gin.Context) {
     data, err := repo.CreateProduct(prepareDataToCreateProduct(req))
     if nil != err {
         c.JSON(http.StatusInternalServerError, fmt.Sprintf("%v", err))
+        return
+    }
+
+    // create option
+    if len(req.Options) > 0 {
+        options, err := repo.CreateProductOptions(prepareDataToCreateOptions(req.Options, data.Id))
+        if nil != err {
+            c.JSON(http.StatusInternalServerError, fmt.Sprintf("%v", err))
+            return
+        }
+
+        mapOptionNameToId := map[string]string{}
+        for _, option := range options {
+            mapOptionNameToId[option.Name] = option.Id
+        }
+
+        for _, option := range req.Options {
+            _, err = repo.CreateProductOptionItems(prepareDataToCreateOptionItems(option.Items, mapOptionNameToId[option.Name]))
+            if nil != err {
+                c.JSON(http.StatusInternalServerError, fmt.Sprintf("%v", err))
+                return
+            }
+        }
     }
 
     c.JSON(http.StatusOK, data)
@@ -102,7 +125,7 @@ func (h *Handler) ListProduct(c *gin.Context) {
     logger.Infof("Enter GetProduct, data request = ", req)
 
     repo := repository.NewRepository(h.database)
-    result, err := repo.ListProduct()
+    result, err := repo.ListProduct(req)
     if err != nil {
         c.JSON(http.StatusInternalServerError, fmt.Sprintf("%v", err))
         return
@@ -138,7 +161,15 @@ func (h *Handler) GetProduct(c *gin.Context) {
         c.JSON(http.StatusInternalServerError, fmt.Sprintf("%v", err))
         return
     }
-
     response := model_product.ConvertProductModelToProductResponse(data)
+
+    // get product options
+    options, _ := repo.ListProductOptionsByProductId(req.Id)
+    _options, optionIds := model_product.ConvertOptionsModelToOptions(options)
+
+    // get product option items
+    optionItems, _ := repo.ListProductOptionItemsByOptionIds(optionIds)
+    response.Options = prepareOptionToResponse(_options, model_product.ConvertOptionItemsModelToOptionItems(optionItems))
+
     c.JSON(http.StatusOK, response)
 }

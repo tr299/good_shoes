@@ -88,3 +88,69 @@ func prepareDataToUpdateProduct(req *model_product.UpdateProductRequest) *model_
 
     return data
 }
+
+func prepareDataToCreateOptionItems(req []model_product.OptionItem, optionId string) []model_product.OptionItemModel {
+    var data []model_product.OptionItemModel
+
+    for _, item := range req {
+        // generate uuid
+        uuid, err := uuid.NewV4()
+        if err != nil {
+            logger.Error(err)
+            return nil
+        }
+        createdAt := time.Now()
+        data = append(data, model_product.OptionItemModel{
+            Id:        fmt.Sprintf("ITEM-%v", uuid),
+            OptionId:  optionId,
+            Label:     item.Label,
+            Value:     item.Value,
+            ImageUrl:  item.ImageUrl,
+            CreatedAt: &createdAt,
+        })
+    }
+
+    return data
+}
+
+func prepareDataToCreateOptions(req []model_product.Option, productId string) []*model_product.ProductOptionModel {
+    var data []*model_product.ProductOptionModel
+
+    for _, option := range req {
+        // generate uuid
+        uuid, err := uuid.NewV4()
+        if err != nil {
+            logger.Error(err)
+            return nil
+        }
+        createdAt := time.Now()
+        optionId := fmt.Sprintf("OP-%v", uuid)
+        o := &model_product.ProductOptionModel{
+            Id:        optionId,
+            Name:      option.Name,
+            ProductId: productId,
+            Key:       option.Key,
+            Type:      option.Type,
+            Price:     option.Price,
+            CreatedAt: &createdAt,
+        }
+        data = append(data, o)
+    }
+
+    return data
+}
+
+func prepareOptionToResponse(options []model_product.Option, optionItems []model_product.OptionItem) []model_product.Option {
+    var data []model_product.Option
+    mapOptionIdToItems := map[string][]model_product.OptionItem{}
+    for _, item := range optionItems {
+        mapOptionIdToItems[item.OptionId] = append(mapOptionIdToItems[item.OptionId], item)
+    }
+
+    for _, option := range options {
+        option.Items = append(option.Items, mapOptionIdToItems[option.Id]...)
+        data = append(data, option)
+    }
+
+    return data
+}
