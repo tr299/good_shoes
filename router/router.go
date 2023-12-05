@@ -12,6 +12,7 @@ import (
     "golang.org/x/net/context"
 
     "good_shoes/common/config"
+    orderService "good_shoes/order/service"
     productService "good_shoes/product/service"
 )
 
@@ -71,14 +72,21 @@ func (server *Server) setupRoute() {
     //gin.SetMode(gin.ReleaseMode)
     router := gin.Default()
     router.Use(otelgin.Middleware("router"))
+    apiPrefix := server.config.ApiPrefix
 
-    // product router
-    productConfig := server.config.ProductConfig
+    // product module
     productHandler, _ := productService.NewHandler(&server.config, server.database, tracer)
-    router.POST(productConfig.ApiPrefix+"/v1/products", productHandler.CreateProduct)
-    router.PUT(productConfig.ApiPrefix+"/v1/products/:id", productHandler.UpdateProduct)
-    router.GET(productConfig.ApiPrefix+"/v1/products", productHandler.ListProduct)
-    router.GET(productConfig.ApiPrefix+"/v1/products/:id", productHandler.GetProduct)
+    router.POST(apiPrefix+"/v1/products", productHandler.CreateProduct)
+    router.PUT(apiPrefix+"/v1/products/:id", productHandler.UpdateProduct)
+    router.GET(apiPrefix+"/v1/products", productHandler.ListProduct)
+    router.GET(apiPrefix+"/v1/products/:id", productHandler.GetProduct)
+
+    // sales order module
+    orderHandler, _ := orderService.NewHandler(&server.config, server.database, tracer)
+    router.POST(apiPrefix+"/v1/orders", orderHandler.CreateSalesOrder)
+    router.PUT(apiPrefix+"/v1/orders/:id", orderHandler.UpdateSalesOrder)
+    router.GET(apiPrefix+"/v1/orders", orderHandler.ListSalesOrder)
+    router.GET(apiPrefix+"/v1/orders/:id", orderHandler.GetSalesOrder)
 
     server.router = router
 }

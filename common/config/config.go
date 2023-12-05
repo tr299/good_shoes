@@ -26,10 +26,11 @@ type DbConfig struct {
 
 type Config struct {
     ServerAddress string
+    BaseUrl       string
+    ApiPrefix     string
     LoggerConfig  LoggerConfig
     Tracer        TracerConfig
     Database      *DbConfig
-    ProductConfig *ProductConfig
 }
 
 func LoadConfig(path string) (config Config, err error) {
@@ -44,15 +45,11 @@ func LoadConfig(path string) (config Config, err error) {
         return
     }
     config.ServerAddress = viper.GetString("server.address")
+    config.ApiPrefix = viper.GetString("server.api_prefix")
 
     config.Database = &DbConfig{
         Driver: "database.driver",
         Source: "database.source",
-    }
-
-    config.ProductConfig = &ProductConfig{
-        BaseUrl:   viper.GetString("product.base_url"),
-        ApiPrefix: viper.GetString("product.api_prefix"),
     }
 
     return

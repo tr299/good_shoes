@@ -3,16 +3,17 @@ package service
 import (
     "context"
     "fmt"
+    "net/http"
+
     "github.com/gin-gonic/gin"
     "go.opentelemetry.io/otel/trace"
+    "gorm.io/gorm"
+
+    "good_shoes/common/config"
     "good_shoes/common/model/model_product"
     "good_shoes/common/util"
     "good_shoes/logger"
     "good_shoes/product/repository"
-    "gorm.io/gorm"
-    "net/http"
-
-    "good_shoes/common/config"
 )
 
 type Handler struct {
