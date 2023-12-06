@@ -1,7 +1,6 @@
 package model_order
 
 import (
-    "gorm.io/gorm"
     "time"
 )
 
@@ -59,7 +58,7 @@ type SalesOrderItemModel struct {
 
     CreatedAt *time.Time
     UpdatedAt *time.Time
-    DeletedAt *gorm.DeletedAt
+    DeletedAt *time.Time
 }
 
 type SalesOrderModel struct {
@@ -121,5 +120,59 @@ type SalesOrderModel struct {
 
     CreatedAt *time.Time
     UpdatedAt *time.Time
-    DeletedAt *gorm.DeletedAt
+    DeletedAt *time.Time
+}
+
+func ConvertSalesOrderModelToSalesOrderResponse(o *SalesOrderModel) *SalesOrder {
+    data := &SalesOrder{
+        Id:                   o.Id,
+        OrderNumber:          o.OrderNumber,
+        Status:               o.Status,
+        PaymentStatus:        o.PaymentStatus,
+        FulfillmentStatus:    o.FulfillmentStatus,
+        ShipmentStatus:       o.ShipmentStatus,
+        ProcessStatus:        o.ProcessStatus,
+        TotalItemQty:         o.TotalItemQty,
+        TotalItemCount:       o.TotalItemCount,
+        CustomerID:           o.CustomerID,
+        CustomerExternalID:   o.CustomerExternalID,
+        CustomerEmail:        o.CustomerEmail,
+        CustomerPhone:        o.CustomerPhone,
+        CustomerFirstName:    o.CustomerFirstName,
+        CustomerMiddleName:   o.CustomerMiddleName,
+        CustomerLastName:     o.CustomerLastName,
+        CustomerTaxNumber:    o.CustomerTaxNumber,
+        CustomerCompanyName:  o.CustomerCompanyName,
+        Currency:             o.Currency,
+        BaseCurrency:         o.BaseCurrency,
+        CurrencyExchangeRate: o.CurrencyExchangeRate,
+        Subtotal:             o.Subtotal,
+        SubtotalInclTax:      o.SubtotalInclTax,
+        DiscountPercent:      o.DiscountPercent,
+        DiscountAmount:       o.DiscountAmount,
+        AppliedDiscounts:     o.AppliedDiscounts,
+        ShippingMethod:       o.ShippingMethod,
+        ShippingDescription:  o.ShippingDescription,
+        ShippingAmount:       o.ShippingAmount,
+        TaxAmount:            o.TaxAmount,
+        ExtraAmount:          o.ExtraAmount,
+        GrandTotal:           o.GrandTotal,
+        Note:                 o.Note,
+        Tags:                 o.Tags,
+        MetaData:             o.MetaData,
+    }
+
+    if nil != o.CreatedAt {
+        data.CreatedAt = o.CreatedAt.Format(time.RFC3339)
+    }
+
+    if nil != o.UpdatedAt {
+        data.UpdatedAt = o.UpdatedAt.Format(time.RFC3339)
+    }
+
+    if nil != o.DeletedAt {
+        data.DeletedAt = o.DeletedAt.Format(time.RFC3339)
+    }
+
+    return data
 }

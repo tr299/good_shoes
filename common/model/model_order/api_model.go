@@ -1,10 +1,5 @@
 package model_order
 
-import (
-    "gorm.io/gorm"
-    "time"
-)
-
 type SalesOrderItem struct {
     Id              string `json:"id"`
     SalesOrderID    string `json:"sales_order_id"`
@@ -57,9 +52,9 @@ type SalesOrderItem struct {
     Note     string `json:"note"`
     MetaData string `json:"meta_data"`
 
-    CreatedAt *time.Time      `json:"created_at"`
-    UpdatedAt *time.Time      `json:"updated_at"`
-    DeletedAt *gorm.DeletedAt `json:"deleted_at"`
+    CreatedAt string `json:"created_at"`
+    UpdatedAt string `json:"updated_at"`
+    DeletedAt string `json:"deleted_at"`
 }
 
 type SalesOrder struct {
@@ -119,9 +114,9 @@ type SalesOrder struct {
     Tags     string `json:"tags"`
     MetaData string `json:"meta_data"`
 
-    CreatedAt *time.Time      `json:"created_at"`
-    UpdatedAt *time.Time      `json:"updated_at"`
-    DeletedAt *gorm.DeletedAt `json:"deleted_at"`
+    CreatedAt string `json:"created_at"`
+    UpdatedAt string `json:"updated_at"`
+    DeletedAt string `json:"deleted_at"`
 }
 
 type SalesOrderDetail struct {
@@ -129,6 +124,9 @@ type SalesOrderDetail struct {
     Items []SalesOrderItem `json:"items"`
 }
 
-type ListSalesOrder struct {
+type ListSalesOrderResponse struct {
     Items []SalesOrder `json:"items"`
+}
+
+type ListSalesOrderRequest struct {
 }

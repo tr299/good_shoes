@@ -1,9 +1,16 @@
 package service
 
 import (
+    "context"
+    "fmt"
     "github.com/gin-gonic/gin"
     "go.opentelemetry.io/otel/trace"
+    "good_shoes/common/model/model_order"
+    "good_shoes/common/util"
+    "good_shoes/logger"
+    "good_shoes/order/repository"
     "gorm.io/gorm"
+    "net/http"
 
     "good_shoes/common/config"
 )
@@ -31,7 +38,28 @@ func (h *Handler) UpdateSalesOrder(c *gin.Context) {
 }
 
 func (h *Handler) ListSalesOrder(c *gin.Context) {
+    newCtx := context.WithValue(c.Request.Context(), "Lang", c.Request.Header.Get(util.LanguageHeaderKey))
+    ctx, span := h.tracer.Start(newCtx, "ListSalesOrder")
+    defer span.End()
 
+    req := &model_order.ListSalesOrderRequest{}
+
+    if err := util.BindRequest(ctx, c, req); nil != err {
+        c.JSON(http.StatusBadRequest, err)
+        return
+    }
+
+    logger.Infof("Enter ListSalesOrder, data request = ", req)
+
+    repo := repository.NewRepository(h.database)
+    result, err := repo.ListOrder(req)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, fmt.Sprintf("%v", err))
+        return
+    }
+
+    data := prepareDataToResponseListSalesOrder(result)
+    c.JSON(http.StatusOK, data)
 }
 
 func (h *Handler) GetSalesOrder(c *gin.Context) {
