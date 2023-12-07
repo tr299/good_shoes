@@ -2,7 +2,7 @@ package router
 
 import (
     "time"
-    
+
     "good_shoes/logger"
 
     jwt "github.com/appleboy/gin-jwt/v2"
