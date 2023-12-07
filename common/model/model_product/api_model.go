@@ -6,6 +6,7 @@ type ListProductRequest struct {
     MaxPrice    float64 `form:"max_price"`
     Category    string  `form:"category"`
     Brand       string  `form:"brand"`
+    Tag         string  `form:"tag"`
 }
 
 type ListProductResponse struct {

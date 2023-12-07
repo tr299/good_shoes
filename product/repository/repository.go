@@ -54,6 +54,10 @@ func (r *Repository) ListProduct(req *model_product.ListProductRequest) ([]*mode
         query = query.Where("brand = ?", req.Brand)
     }
 
+    if len(req.Tag) > 0 {
+        query = query.Where("tags = ?", req.Tag)
+    }
+
     if len(req.Category) > 0 {
         query = query.Where("category_ids = ?", req.Category)
     }
