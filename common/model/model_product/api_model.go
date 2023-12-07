@@ -21,7 +21,7 @@ type OptionItem struct {
 
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
-    DeletedAt string `json:"deleted_at"`
+    DeletedAt string `json:"deleted_at,omitempty"`
 }
 
 type Option struct {
@@ -35,7 +35,7 @@ type Option struct {
 
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
-    DeletedAt string `json:"deleted_at"`
+    DeletedAt string `json:"deleted_at,omitempty"`
 }
 
 type ProductItem struct {

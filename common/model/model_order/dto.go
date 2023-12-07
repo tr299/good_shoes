@@ -1,7 +1,12 @@
 package model_order
 
 import (
+    "fmt"
     "time"
+
+    "github.com/gofrs/uuid"
+
+    "good_shoes/logger"
 )
 
 type SalesOrderItemModel struct {
@@ -175,4 +180,109 @@ func ConvertSalesOrderModelToSalesOrderResponse(o *SalesOrderModel) *SalesOrder 
     }
 
     return data
+}
+
+func ConvertOrderItemsModelToOrderItems(o *SalesOrderItemModel) *SalesOrderItem {
+    data := &SalesOrderItem{
+        Id:                     o.Id,
+        SalesOrderID:           o.SalesOrderID,
+        ProductID:              o.ProductID,
+        ParentProductID:        o.ParentProductID,
+        Type:                   o.Type,
+        Sku:                    o.Sku,
+        Name:                   o.Name,
+        MediaUrl:               o.MediaUrl,
+        IsVirtual:              o.IsVirtual,
+        IsGiftProduct:          o.IsGiftProduct,
+        RequireShipping:        o.RequireShipping,
+        QtyOrdered:             o.QtyOrdered,
+        QtyInvoiced:            o.QtyInvoiced,
+        QtyFulfilled:           o.QtyFulfilled,
+        QtyShipped:             o.QtyShipped,
+        QtyRefunded:            o.QtyRefunded,
+        QtyRestocked:           o.QtyRestocked,
+        QtyCanceled:            o.QtyCanceled,
+        QtyBackordered:         o.QtyBackordered,
+        Price:                  o.Price,
+        PriceInclTax:           o.PriceInclTax,
+        CustomPrice:            o.CustomPrice,
+        CustomPriceInclTax:     o.CustomPriceInclTax,
+        SpecialPrice:           o.SpecialPrice,
+        SpecialPriceInclTax:    o.SpecialPriceInclTax,
+        DiscountAmount:         o.DiscountAmount,
+        ShippingDiscountAmount: o.ShippingDiscountAmount,
+        AppliedDiscounts:       o.AppliedDiscounts,
+        Taxable:                o.Taxable,
+        TaxAmount:              o.TaxAmount,
+        DiscountTaxAmount:      o.DiscountTaxAmount,
+        AppliedTaxes:           o.AppliedTaxes,
+        ShippingAmount:         o.ShippingAmount,
+        RowTotal:               o.RowTotal,
+        RowTotalInclTax:        o.RowTotalInclTax,
+        Note:                   o.Note,
+        MetaData:               o.MetaData,
+    }
+
+    if nil != o.CreatedAt {
+        data.CreatedAt = o.CreatedAt.Format(time.RFC3339)
+    }
+
+    if nil != o.UpdatedAt {
+        data.UpdatedAt = o.UpdatedAt.Format(time.RFC3339)
+    }
+
+    if nil != o.DeletedAt {
+        data.DeletedAt = o.DeletedAt.Format(time.RFC3339)
+    }
+
+    return data
+}
+
+func ConverOrderItemReqToOrderItemModel(o *SalesOrderItem) *SalesOrderItemModel {
+    uuid, err := uuid.NewV4()
+    if err != nil {
+        logger.Error(err)
+        return nil
+    }
+    createdAt := time.Now()
+    return &SalesOrderItemModel{
+        Id:                     fmt.Sprintf("ORI-%v", uuid),
+        SalesOrderID:           o.SalesOrderID,
+        ProductID:              o.ProductID,
+        ParentProductID:        o.ParentProductID,
+        Type:                   o.Type,
+        Sku:                    o.Sku,
+        Name:                   o.Name,
+        MediaUrl:               o.MediaUrl,
+        IsVirtual:              o.IsVirtual,
+        IsGiftProduct:          o.IsGiftProduct,
+        RequireShipping:        o.RequireShipping,
+        QtyOrdered:             o.QtyOrdered,
+        QtyInvoiced:            o.QtyInvoiced,
+        QtyFulfilled:           o.QtyFulfilled,
+        QtyShipped:             o.QtyShipped,
+        QtyRefunded:            o.QtyRefunded,
+        QtyRestocked:           o.QtyRestocked,
+        QtyCanceled:            o.QtyCanceled,
+        QtyBackordered:         o.QtyBackordered,
+        Price:                  o.Price,
+        PriceInclTax:           o.PriceInclTax,
+        CustomPrice:            o.CustomPrice,
+        CustomPriceInclTax:     o.CustomPriceInclTax,
+        SpecialPrice:           o.SpecialPrice,
+        SpecialPriceInclTax:    o.SpecialPriceInclTax,
+        DiscountAmount:         o.DiscountAmount,
+        ShippingDiscountAmount: o.ShippingDiscountAmount,
+        AppliedDiscounts:       o.AppliedDiscounts,
+        Taxable:                o.Taxable,
+        TaxAmount:              o.TaxAmount,
+        DiscountTaxAmount:      o.DiscountTaxAmount,
+        AppliedTaxes:           o.AppliedTaxes,
+        ShippingAmount:         o.ShippingAmount,
+        RowTotal:               o.RowTotal,
+        RowTotalInclTax:        o.RowTotalInclTax,
+        Note:                   o.Note,
+        MetaData:               o.MetaData,
+        CreatedAt:              &createdAt,
+    }
 }
