@@ -2,6 +2,7 @@ package router
 
 import (
     "gorm.io/gorm"
+    "log"
     "net/http"
     "time"
 
@@ -38,7 +39,7 @@ var tracer trace.Tracer
 
 func init() {
     // Name the tracer after the package, or the service if you are in main
-    tracer = otel.Tracer("git.onepay.vn/onepay/go/ddsp/router")
+    tracer = otel.Tracer("router")
 }
 
 // NewServer creates new server instance
@@ -74,19 +75,33 @@ func (server *Server) setupRoute() {
     router.Use(otelgin.Middleware("router"))
     apiPrefix := server.config.ApiPrefix
 
+    // add jwt middleware
+    authMiddleware, err := initJwt()
+    if err != nil {
+        log.Fatal("JWT Error:" + err.Error())
+    }
+    if errInit := authMiddleware.MiddlewareInit(); nil != errInit {
+        log.Fatal("authMiddleware.MiddlewareInit() Error:" + errInit.Error())
+    }
+
+    router.POST("/login", authMiddleware.LoginHandler)
+
+    authRouter := router.Group(apiPrefix)
+    authRouter.Use(authMiddleware.MiddlewareFunc())
+
     // product module
     productHandler, _ := productService.NewHandler(&server.config, server.database, tracer)
-    router.POST(apiPrefix+"/v1/products", productHandler.CreateProduct)
-    router.PUT(apiPrefix+"/v1/products/:id", productHandler.UpdateProduct)
-    router.GET(apiPrefix+"/v1/products", productHandler.ListProduct)
-    router.GET(apiPrefix+"/v1/products/:id", productHandler.GetProduct)
+    authRouter.POST("/v1/products", productHandler.CreateProduct)
+    authRouter.PUT("/v1/products/:id", productHandler.UpdateProduct)
+    authRouter.GET("/v1/products", productHandler.ListProduct)
+    authRouter.GET("/v1/products/:id", productHandler.GetProduct)
 
     // sales order module
     orderHandler, _ := orderService.NewHandler(&server.config, server.database, tracer)
-    router.POST(apiPrefix+"/v1/orders", orderHandler.CreateSalesOrder)
-    router.PUT(apiPrefix+"/v1/orders/:id", orderHandler.UpdateSalesOrder)
-    router.GET(apiPrefix+"/v1/orders", orderHandler.ListSalesOrder)
-    router.GET(apiPrefix+"/v1/orders/:id", orderHandler.GetSalesOrder)
+    authRouter.POST("/v1/orders", orderHandler.CreateSalesOrder)
+    authRouter.PUT("/v1/orders/:id", orderHandler.UpdateSalesOrder)
+    authRouter.GET("/v1/orders", orderHandler.ListSalesOrder)
+    authRouter.GET("/v1/orders/:id", orderHandler.GetSalesOrder)
 
     server.router = router
 }
