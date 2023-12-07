@@ -86,22 +86,22 @@ func (server *Server) setupRoute() {
 
     router.POST("/login", authMiddleware.LoginHandler)
 
-    authRouter := router.Group(apiPrefix)
+    authRouter := router.Group("")
     authRouter.Use(authMiddleware.MiddlewareFunc())
 
     // product module
     productHandler, _ := productService.NewHandler(&server.config, server.database, tracer)
     router.GET(apiPrefix+"/v1/products", productHandler.ListProduct)
     router.GET(apiPrefix+"/v1/products/:id", productHandler.GetProduct)
-    authRouter.POST("/v1/products", productHandler.CreateProduct)
-    authRouter.PUT("/v1/products/:id", productHandler.UpdateProduct)
+    authRouter.POST(apiPrefix+"/v1/products", productHandler.CreateProduct)
+    authRouter.PUT(apiPrefix+"/v1/products/:id", productHandler.UpdateProduct)
 
     // sales order module
     orderHandler, _ := orderService.NewHandler(&server.config, server.database, tracer)
     router.POST(apiPrefix+"/v1/orders", orderHandler.CreateSalesOrder)
     router.GET(apiPrefix+"/v1/orders", orderHandler.ListSalesOrder)
     router.GET(apiPrefix+"/v1/orders/:id", orderHandler.GetSalesOrder)
-    authRouter.PUT("/v1/orders/:id", orderHandler.UpdateSalesOrder)
+    authRouter.PUT(apiPrefix+"/v1/orders/:id", orderHandler.UpdateSalesOrder)
 
     server.router = router
 }
