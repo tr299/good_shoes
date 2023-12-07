@@ -59,6 +59,7 @@ type ProductItem struct {
     Description2    string   `json:"description2"`
     ImageUrl        string   `json:"image_url"`
     IsVariant       bool     `json:"is_variant"`
+    Tag             string   `json:"tag"`
     Options         []Option `json:"options"`
 }
 
@@ -87,6 +88,7 @@ type UpdateProductRequest struct {
     Description2    string  `json:"description2"`
     ImageUrl        string  `json:"image_url"`
     IsVariant       bool    `json:"is_variant"`
+    Tag             string  `json:"tag"`
 }
 
 type GetProductByIdRequest struct {

@@ -76,6 +76,7 @@ func ConvertProductModelToProductResponse(o *ProductModel) *ProductItem {
         Description:     o.Description,
         Description2:    o.Description2,
         ImageUrl:        o.ImageUrl,
+        Tag:             o.Tags,
     }
 
     if nil != o.CreatedAt {

@@ -64,7 +64,7 @@ func (h *Handler) CreateSalesOrder(c *gin.Context) {
         return
     }
 
-    c.JSON(http.StatusCreated, &model_order.CreateSalesOrderResponse{
+    c.JSON(http.StatusOK, &model_order.CreateSalesOrderResponse{
         Message: "Create Sales Order Success",
         OrderId: data.Id,
     })
