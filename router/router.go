@@ -106,7 +106,7 @@ func (server *Server) setupRoute() {
 
     // upload image
     mediaHandler, _ := mediaService.NewHandler(&server.config, tracer)
-    router.POST(apiPrefix+"/v1/uploads", mediaHandler.UploadFile)
+    authRouter.POST(apiPrefix+"/v1/uploads", mediaHandler.UploadFile)
 
     server.router = router
 }

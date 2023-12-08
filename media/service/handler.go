@@ -2,13 +2,16 @@ package service
 
 import (
     "fmt"
-    "github.com/gin-gonic/gin"
-    "go.opentelemetry.io/otel/trace"
-    "good_shoes/common/config"
-    "good_shoes/logger"
     "net/http"
     "os"
     "path/filepath"
+    "time"
+
+    "good_shoes/common/config"
+    "good_shoes/logger"
+
+    "github.com/gin-gonic/gin"
+    "go.opentelemetry.io/otel/trace"
 )
 
 type Handler struct {
@@ -39,7 +42,8 @@ func (h *Handler) UploadFile(c *gin.Context) {
     }
 
     // Tạo tên tệp duy nhất cho ảnh
-    filename := filepath.Join(uploadPath, file.Filename)
+    newFileName := fmt.Sprintf("%d-%s", time.Now().UnixNano(), file.Filename)
+    filename := filepath.Join(uploadPath, newFileName)
 
     // Lưu ảnh
     if err := c.SaveUploadedFile(file, filename); err != nil {
@@ -48,5 +52,8 @@ func (h *Handler) UploadFile(c *gin.Context) {
         return
     }
 
-    c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("File '%s' uploaded successfully", file.Filename)})
+    c.JSON(http.StatusOK, gin.H{
+        "url":     "http://www.good-shoes.tr29.store/uploads/" + newFileName,
+        "message": fmt.Sprintf("File '%s' uploaded successfully", file.Filename),
+    })
 }
