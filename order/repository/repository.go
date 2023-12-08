@@ -78,3 +78,14 @@ func (r *Repository) CreateSalesOrderItems(o []model_order.SalesOrderItemModel) 
 
     return o, nil
 }
+
+func (r *Repository) UpdateSalesOrderStatus(id, status string) (*model_order.SalesOrderModel, error) {
+    query := r.db.Session(&gorm.Session{NewDB: true})
+    err := query.Table("sales_orders").Where("id = ?", id).UpdateColumn("status", status).Error
+    if err != nil {
+        logger.Error("repository update order status failed: ", err)
+        return nil, err
+    }
+
+    return r.GetOrderById(id)
+}

@@ -95,3 +95,8 @@ type UpdateProductRequest struct {
 type GetProductByIdRequest struct {
     Id string `uri:"id"`
 }
+
+type CreateProductResponse struct {
+    ProductId string `json:"product_id"`
+    Message   string `json:"message"`
+}

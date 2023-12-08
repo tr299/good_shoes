@@ -79,7 +79,10 @@ func (h *Handler) CreateProduct(c *gin.Context) {
         }
     }
 
-    c.JSON(http.StatusOK, data)
+    c.JSON(http.StatusOK, &model_product.CreateProductResponse{
+        ProductId: data.Id,
+        Message:   "Create product success",
+    })
 }
 
 func (h *Handler) UpdateProduct(c *gin.Context) {
@@ -108,7 +111,10 @@ func (h *Handler) UpdateProduct(c *gin.Context) {
         c.JSON(http.StatusInternalServerError, fmt.Sprintf("%v", err))
     }
 
-    c.JSON(http.StatusOK, data)
+    c.JSON(http.StatusOK, &model_product.CreateProductResponse{
+        ProductId: data.Id,
+        Message:   "Update product success",
+    })
 }
 
 func (h *Handler) ListProduct(c *gin.Context) {

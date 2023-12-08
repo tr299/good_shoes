@@ -143,3 +143,14 @@ type CreateSalesOrderResponse struct {
     Message string `json:"message"`
     OrderId string `json:"order_id"`
 }
+
+type UpdateOrderStatusRequest struct {
+    Id     string `uri:"id"`
+    Status string `json:"status"`
+}
+
+type UpdateOrderStatusResponse struct {
+    OrderId string `json:"order_id"`
+    Status  string `json:"status"`
+    Message string `json:"message"`
+}

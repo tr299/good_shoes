@@ -102,7 +102,7 @@ func (server *Server) setupRoute() {
     router.POST(apiPrefix+"/v1/orders", orderHandler.CreateSalesOrder)
     router.GET(apiPrefix+"/v1/orders", orderHandler.ListSalesOrder)
     router.GET(apiPrefix+"/v1/orders/:id", orderHandler.GetSalesOrder)
-    authRouter.PUT(apiPrefix+"/v1/orders/:id", orderHandler.UpdateSalesOrder)
+    authRouter.PUT(apiPrefix+"/v1/orders/:id/status", orderHandler.UpdateSalesOrderStatus)
 
     // upload image
     mediaHandler, _ := mediaService.NewHandler(&server.config, tracer)

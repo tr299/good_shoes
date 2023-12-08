@@ -70,8 +70,37 @@ func (h *Handler) CreateSalesOrder(c *gin.Context) {
     })
 }
 
-func (h *Handler) UpdateSalesOrder(c *gin.Context) {
+func (h *Handler) UpdateSalesOrderStatus(c *gin.Context) {
+    newCtx := context.WithValue(c.Request.Context(), "Lang", c.Request.Header.Get(util.LanguageHeaderKey))
+    ctx, span := h.tracer.Start(newCtx, "UpdateSalesOrderState")
+    defer span.End()
 
+    req := &model_order.UpdateOrderStatusRequest{}
+
+    if err := util.BindRequest(ctx, c, req); nil != err {
+        c.JSON(http.StatusBadRequest, err.Error())
+        return
+    }
+
+    logger.Infof("Enter ListSalesOrder, data request = ", req)
+
+    if err := validateUpdateOrderStatus(req); nil != err {
+        logger.Error(err)
+        c.JSON(http.StatusBadRequest, err.Error())
+    }
+
+    repo := repository.NewRepository(h.database)
+    data, err := repo.UpdateSalesOrderStatus(req.Id, req.Status)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, err.Error())
+        return
+    }
+
+    c.JSON(http.StatusOK, &model_order.UpdateOrderStatusResponse{
+        OrderId: data.Id,
+        Status:  data.Status,
+        Message: "Update sales order status success",
+    })
 }
 
 func (h *Handler) ListSalesOrder(c *gin.Context) {
