@@ -13,6 +13,7 @@ import (
     "golang.org/x/net/context"
 
     "good_shoes/common/config"
+    mediaService "good_shoes/media/service"
     orderService "good_shoes/order/service"
     productService "good_shoes/product/service"
 )
@@ -102,6 +103,10 @@ func (server *Server) setupRoute() {
     router.GET(apiPrefix+"/v1/orders", orderHandler.ListSalesOrder)
     router.GET(apiPrefix+"/v1/orders/:id", orderHandler.GetSalesOrder)
     authRouter.PUT(apiPrefix+"/v1/orders/:id", orderHandler.UpdateSalesOrder)
+
+    // upload image
+    mediaHandler, _ := mediaService.NewHandler(&server.config, tracer)
+    router.POST(apiPrefix+"/v1/uploads", mediaHandler.UploadFile)
 
     server.router = router
 }
