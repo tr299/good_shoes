@@ -28,9 +28,47 @@ func prepareDataToCreateProduct(req *model_product.CreateProductRequest) *model_
 
     data := &model_product.ProductModel{
         Id:               fmt.Sprintf("PROD-%v", uuid),
-        IsVariant:        req.IsVariant,
+        IsVariant:        false,
         Sku:              req.Sku,
         Name:             req.Name,
+        Description:      req.Description,
+        Description2:     req.Description2,
+        Status:           req.Status,
+        Type:             req.Type,
+        OptionKey:        "",
+        OptionValue:      "",
+        Tags:             req.Tag,
+        Price:            req.Price,
+        SalePrice:        req.SalePrice,
+        Cost:             req.Cost,
+        CategoryIds:      req.Category,
+        CheckInventory:   req.CheckInventory,
+        MultipleVariants: req.MultipleVariant,
+        TotalQuantity:    req.TotalQty,
+        Brand:            req.Brand,
+        ImageUrl:         req.ImageUrl,
+    }
+
+    createdAt := time.Now()
+    data.CreatedAt = &createdAt
+
+    return data
+}
+
+func prepareDataToCreateVariant(req *model_product.CreateProductRequest, variantName, parentId string) *model_product.ProductModel {
+    // generate uuid
+    uuid, err := uuid.NewV4()
+    if err != nil {
+        logger.Error(err)
+        return nil
+    }
+
+    data := &model_product.ProductModel{
+        Id:               fmt.Sprintf("PROD-%v", uuid),
+        ParentId:         parentId,
+        IsVariant:        true,
+        Sku:              fmt.Sprintf("%v-%v", req.Sku, variantName),
+        Name:             fmt.Sprintf("%v-%v", req.Name, variantName),
         Description:      req.Description,
         Description2:     req.Description2,
         Status:           req.Status,
@@ -153,4 +191,19 @@ func prepareOptionToResponse(options []model_product.Option, optionItems []model
     }
 
     return data
+}
+
+func prepareDataToCreateProductVariant(s1, s2 []string) []string {
+    var result []string
+    for _, n := range s1 {
+        if len(s2) == 0 {
+            return s1
+        }
+
+        for _, s := range s2 {
+            result = append(result, fmt.Sprintf("%v-%v", s, n))
+        }
+    }
+
+    return result
 }

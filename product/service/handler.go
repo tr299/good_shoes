@@ -51,7 +51,7 @@ func (h *Handler) CreateProduct(c *gin.Context) {
     }
 
     repo := repository.NewRepository(h.database)
-    data, err := repo.CreateProduct(prepareDataToCreateProduct(req))
+    product, err := repo.CreateProduct(prepareDataToCreateProduct(req))
     if nil != err {
         c.JSON(http.StatusInternalServerError, fmt.Sprintf("%v", err))
         return
@@ -59,7 +59,7 @@ func (h *Handler) CreateProduct(c *gin.Context) {
 
     // create option
     if len(req.Options) > 0 {
-        options, err := repo.CreateProductOptions(prepareDataToCreateOptions(req.Options, data.Id))
+        options, err := repo.CreateProductOptions(prepareDataToCreateOptions(req.Options, product.Id))
         if nil != err {
             c.JSON(http.StatusInternalServerError, fmt.Sprintf("%v", err))
             return
@@ -70,8 +70,31 @@ func (h *Handler) CreateProduct(c *gin.Context) {
             mapOptionNameToId[option.Name] = option.Id
         }
 
+        var listVariantNames []string
         for _, option := range req.Options {
-            _, err = repo.CreateProductOptionItems(prepareDataToCreateOptionItems(option.Items, mapOptionNameToId[option.Name]))
+            optionItems, err := repo.CreateProductOptionItems(prepareDataToCreateOptionItems(option.Items, mapOptionNameToId[option.Name]))
+            if nil != err {
+                c.JSON(http.StatusInternalServerError, fmt.Sprintf("%v", err))
+                return
+            }
+
+            mapOptionToNameOptionItems := map[string][]string{}
+            for _, item := range optionItems {
+                if len(mapOptionToNameOptionItems[item.OptionId]) > 0 {
+                    mapOptionToNameOptionItems[item.OptionId] = append(mapOptionToNameOptionItems[item.OptionId], item.Value)
+                    continue
+                }
+                mapOptionToNameOptionItems[item.OptionId] = []string{item.Value}
+            }
+
+            for _, nameOptionItems := range mapOptionToNameOptionItems {
+                listVariantNames = prepareDataToCreateProductVariant(nameOptionItems, listVariantNames)
+            }
+        }
+
+        // create variant product
+        for _, variantName := range listVariantNames {
+            _, err := repo.CreateProduct(prepareDataToCreateVariant(req, variantName, product.Id))
             if nil != err {
                 c.JSON(http.StatusInternalServerError, fmt.Sprintf("%v", err))
                 return
@@ -80,7 +103,7 @@ func (h *Handler) CreateProduct(c *gin.Context) {
     }
 
     c.JSON(http.StatusOK, &model_product.CreateProductResponse{
-        ProductId: data.Id,
+        ProductId: product.Id,
         Message:   "Create product success",
     })
 }

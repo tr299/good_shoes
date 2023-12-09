@@ -7,6 +7,7 @@ type ListProductRequest struct {
     Category    string  `form:"category"`
     Brand       string  `form:"brand"`
     Tag         string  `form:"tag"`
+    ParentId    string  `form:"parent_id"`
 }
 
 type ListProductResponse struct {
@@ -41,6 +42,7 @@ type Option struct {
 
 type ProductItem struct {
     Id              string   `json:"id"`
+    ParentId        string   `json:"parent_id"`
     Sku             string   `json:"sku"`
     Name            string   `json:"name"`
     Status          string   `json:"status"`

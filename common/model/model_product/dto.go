@@ -33,6 +33,7 @@ type ProductOptionModel struct {
 
 type ProductModel struct {
     Id               string
+    ParentId         string
     IsVariant        bool
     Sku              string
     Name             string
@@ -63,6 +64,8 @@ type ProductModel struct {
 func ConvertProductModelToProductResponse(o *ProductModel) *ProductItem {
     data := &ProductItem{
         Id:              o.Id,
+        ParentId:        o.ParentId,
+        IsVariant:       o.IsVariant,
         Sku:             o.Sku,
         Name:            o.Name,
         Status:          o.Status,

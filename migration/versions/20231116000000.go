@@ -54,7 +54,8 @@ func Version20231116000000(tx *gorm.DB) error {
 
     type Product struct {
         Id               string  `gorm:"TYPE:VARCHAR(100);NOT NULL;PRIMARY_KEY"`
-        IsVariant        bool    `gorm:"index:platform_external_idx,priority:2;TYPE:TINYINT(1);NOT NULL;default:0;"`
+        ParentId         string  `gorm:"TYPE:VARCHAR(100);"`
+        IsVariant        bool    `gorm:"TYPE:TINYINT(1);NOT NULL;default:0;"`
         Sku              string  `gorm:"TYPE:VARCHAR(255);"`
         Name             string  `gorm:"TYPE:VARCHAR(255);"`
         Description      string  `gorm:"TYPE:LONGTEXT;"`
