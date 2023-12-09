@@ -1,7 +1,6 @@
 package router
 
 import (
-    "gorm.io/gorm"
     "log"
     "net/http"
     "time"
@@ -11,6 +10,7 @@ import (
     "go.opentelemetry.io/otel"
     "go.opentelemetry.io/otel/trace"
     "golang.org/x/net/context"
+    "gorm.io/gorm"
 
     "good_shoes/common/config"
     mediaService "good_shoes/media/service"
@@ -96,6 +96,7 @@ func (server *Server) setupRoute() {
     router.GET(apiPrefix+"/v1/products/:id", productHandler.GetProduct)
     authRouter.POST(apiPrefix+"/v1/products", productHandler.CreateProduct)
     authRouter.PUT(apiPrefix+"/v1/products/:id", productHandler.UpdateProduct)
+    authRouter.DELETE(apiPrefix+"/v1/products/:id", productHandler.DeleteProduct)
 
     // sales order module
     orderHandler, _ := orderService.NewHandler(&server.config, server.database, tracer)

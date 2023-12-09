@@ -5,6 +5,7 @@ import (
     "time"
 
     "github.com/gofrs/uuid"
+    "gorm.io/gorm"
 
     "good_shoes/logger"
 )
@@ -63,7 +64,7 @@ type SalesOrderItemModel struct {
 
     CreatedAt *time.Time
     UpdatedAt *time.Time
-    DeletedAt *time.Time
+    DeletedAt *gorm.DeletedAt
 }
 
 type SalesOrderModel struct {
@@ -125,7 +126,7 @@ type SalesOrderModel struct {
 
     CreatedAt *time.Time
     UpdatedAt *time.Time
-    DeletedAt *time.Time
+    DeletedAt *gorm.DeletedAt
 }
 
 func ConvertSalesOrderModelToSalesOrderResponse(o *SalesOrderModel) *SalesOrder {
@@ -173,10 +174,6 @@ func ConvertSalesOrderModelToSalesOrderResponse(o *SalesOrderModel) *SalesOrder 
 
     if nil != o.UpdatedAt {
         data.UpdatedAt = o.UpdatedAt.Format(time.RFC3339)
-    }
-
-    if nil != o.DeletedAt {
-        data.DeletedAt = o.DeletedAt.Format(time.RFC3339)
     }
 
     return data
@@ -229,10 +226,6 @@ func ConvertOrderItemsModelToOrderItems(o *SalesOrderItemModel) *SalesOrderItem 
 
     if nil != o.UpdatedAt {
         data.UpdatedAt = o.UpdatedAt.Format(time.RFC3339)
-    }
-
-    if nil != o.DeletedAt {
-        data.DeletedAt = o.DeletedAt.Format(time.RFC3339)
     }
 
     return data

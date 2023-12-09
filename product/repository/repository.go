@@ -2,9 +2,12 @@ package repository
 
 import (
     "errors"
+    "time"
+
+    "gorm.io/gorm"
+
     "good_shoes/common/model/model_product"
     "good_shoes/logger"
-    "gorm.io/gorm"
 )
 
 type Repository struct {
@@ -39,6 +42,17 @@ func (r *Repository) UpdateProduct(o *model_product.ProductModel) (*model_produc
     }
 
     return o, nil
+}
+
+func (r *Repository) DeleteProduct(id string) error {
+    query := r.db.Session(&gorm.Session{NewDB: true})
+    err := query.Table("products").Where("id = ?", id).UpdateColumn("deleted_at", time.Now()).Error
+    if err != nil {
+        logger.Error("repository delete product failed: ", err)
+        return err
+    }
+
+    return nil
 }
 
 func (r *Repository) ListProduct(req *model_product.ListProductRequest) ([]*model_product.ProductModel, error) {

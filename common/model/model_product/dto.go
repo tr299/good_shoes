@@ -2,6 +2,8 @@ package model_product
 
 import (
     "time"
+
+    "gorm.io/gorm"
 )
 
 type OptionItemModel struct {
@@ -13,7 +15,7 @@ type OptionItemModel struct {
 
     CreatedAt *time.Time
     UpdatedAt *time.Time
-    DeletedAt *time.Time
+    DeletedAt *gorm.DeletedAt
 }
 
 type ProductOptionModel struct {
@@ -26,7 +28,7 @@ type ProductOptionModel struct {
 
     CreatedAt *time.Time
     UpdatedAt *time.Time
-    DeletedAt *time.Time
+    DeletedAt *gorm.DeletedAt
 }
 
 type ProductModel struct {
@@ -55,7 +57,7 @@ type ProductModel struct {
 
     CreatedAt *time.Time
     UpdatedAt *time.Time
-    DeletedAt *time.Time
+    DeletedAt *gorm.DeletedAt
 }
 
 func ConvertProductModelToProductResponse(o *ProductModel) *ProductItem {
@@ -87,10 +89,6 @@ func ConvertProductModelToProductResponse(o *ProductModel) *ProductItem {
         data.UpdatedAt = o.UpdatedAt.Format(time.RFC3339)
     }
 
-    if nil != o.DeletedAt {
-        data.DeletedAt = o.DeletedAt.Format(time.RFC3339)
-    }
-
     return data
 }
 
@@ -111,10 +109,6 @@ func ConvertOptionModelToOption(o *ProductOptionModel) Option {
 
     if nil != o.UpdatedAt {
         data.UpdatedAt = o.UpdatedAt.Format(time.RFC3339)
-    }
-
-    if nil != o.DeletedAt {
-        data.DeletedAt = o.DeletedAt.Format(time.RFC3339)
     }
 
     return data
@@ -147,10 +141,6 @@ func ConvertOptionItemModelToOptionItem(o *OptionItemModel) OptionItem {
 
     if nil != o.UpdatedAt {
         data.UpdatedAt = o.UpdatedAt.Format(time.RFC3339)
-    }
-
-    if nil != o.DeletedAt {
-        data.DeletedAt = o.DeletedAt.Format(time.RFC3339)
     }
 
     return data

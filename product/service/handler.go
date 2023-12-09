@@ -117,6 +117,32 @@ func (h *Handler) UpdateProduct(c *gin.Context) {
     })
 }
 
+func (h *Handler) DeleteProduct(c *gin.Context) {
+    newCtx := context.WithValue(c.Request.Context(), "Lang", c.Request.Header.Get(util.LanguageHeaderKey))
+    ctx, span := h.tracer.Start(newCtx, "DeleteProduct")
+    defer span.End()
+
+    req := &model_product.DeleteProductByIdRequest{}
+
+    if err := util.BindRequest(ctx, c, req); nil != err {
+        c.JSON(http.StatusBadRequest, err)
+        return
+    }
+
+    logger.Infof("Enter DeleteProduct, data request = ", req)
+
+    repo := repository.NewRepository(h.database)
+    err := repo.DeleteProduct(req.Id)
+    if nil != err {
+        c.JSON(http.StatusInternalServerError, fmt.Sprintf("%v", err))
+    }
+
+    c.JSON(http.StatusOK, &model_product.CreateProductResponse{
+        ProductId: req.Id,
+        Message:   "Delete product success",
+    })
+}
+
 func (h *Handler) ListProduct(c *gin.Context) {
     newCtx := context.WithValue(c.Request.Context(), "Lang", c.Request.Header.Get(util.LanguageHeaderKey))
     ctx, span := h.tracer.Start(newCtx, "ListProduct")
