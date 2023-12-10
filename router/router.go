@@ -5,6 +5,7 @@ import (
     "net/http"
     "time"
 
+    "github.com/gin-contrib/cors"
     "github.com/gin-gonic/gin"
     "go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
     "go.opentelemetry.io/otel"
@@ -75,6 +76,14 @@ func (server *Server) setupRoute() {
     router := gin.Default()
     router.Use(otelgin.Middleware("router"))
     apiPrefix := server.config.ApiPrefix
+
+    // setup CORS
+    config := cors.Config{
+        AllowAllOrigins: true,
+        AllowMethods:    []string{"GET", "POST", "PUT", "DELETE"},
+        AllowHeaders:    []string{"Origin", "Content-Type", "Authorization"},
+    }
+    router.Use(cors.New(config))
 
     // add jwt middleware
     authMiddleware, err := initJwt()
