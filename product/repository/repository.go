@@ -58,8 +58,14 @@ func (r *Repository) DeleteProduct(id string) error {
 func (r *Repository) ListProduct(req *model_product.ListProductRequest) ([]*model_product.ProductModel, error) {
     var products []*model_product.ProductModel
     query := r.db.Session(&gorm.Session{NewDB: true}).Table("products")
-
+    offset := 0
+    limit := 20
     // build filter
+    if req.Page > 0 {
+        offset = (req.Page - 1) * req.Limit
+        limit = req.Limit
+    }
+
     if req.InStockOnly {
         query = query.Where("total_quantity > 0")
     }
@@ -88,7 +94,7 @@ func (r *Repository) ListProduct(req *model_product.ListProductRequest) ([]*mode
         query = query.Where("price >= ?", req.MinPrice)
     }
 
-    err := query.Debug().Find(&products).Error
+    err := query.Limit(limit).Offset(offset).Find(&products).Error
     if err != nil {
         logger.Error("repository list product failed: ", err)
         return nil, err

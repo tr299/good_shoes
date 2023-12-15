@@ -17,9 +17,17 @@ func NewRepository(db *gorm.DB) *Repository {
 
 func (r *Repository) ListOrder(req *model_order.ListSalesOrderRequest) ([]*model_order.SalesOrderModel, error) {
     var orders []*model_order.SalesOrderModel
+    offset := 0
+    limit := 20
+
+    if req.Page > 0 {
+        offset = (req.Page - 1) * req.Limit
+        limit = req.Limit
+    }
+
     query := r.db.Session(&gorm.Session{NewDB: true}).Table("sales_orders")
 
-    err := query.Find(&orders).Error
+    err := query.Limit(limit).Offset(offset).Find(&orders).Error
     if err != nil {
         logger.Error("repository list order failed: ", err)
         return nil, err

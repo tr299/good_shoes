@@ -129,6 +129,8 @@ type ListSalesOrderResponse struct {
 }
 
 type ListSalesOrderRequest struct {
+    Page  int `form:"page"`
+    Limit int `form:"limit"`
 }
 
 type GetOrderByIdRequest struct {

@@ -8,6 +8,8 @@ type ListProductRequest struct {
     Brand       string  `form:"brand"`
     Tag         string  `form:"tag"`
     ParentId    string  `form:"parent_id"`
+    Page        int     `form:"page"`
+    Limit       int     `form:"limit"`
 }
 
 type ListProductResponse struct {
