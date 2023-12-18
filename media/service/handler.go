@@ -2,9 +2,11 @@ package service
 
 import (
     "fmt"
+    "io"
     "net/http"
     "os"
     "path/filepath"
+    "regexp"
     "time"
 
     "good_shoes/common/config"
@@ -53,7 +55,66 @@ func (h *Handler) UploadFile(c *gin.Context) {
     }
 
     c.JSON(http.StatusOK, gin.H{
-        "url":     "http://www.good-shoes.tr29.store/uploads/" + newFileName,
+        "url":     "https://www.good-shoes.tr29.store/uploads/" + newFileName,
         "message": fmt.Sprintf("File '%s' uploaded successfully", file.Filename),
+    })
+}
+
+func (h *Handler) UploadMultipleFile(c *gin.Context) {
+    uploadPath := "/var/www/html/uploads"
+    var urlResponses []string
+    // Chấp nhận tất cả các tệp tin từ yêu cầu
+    form, err := c.MultipartForm()
+    if err != nil {
+        c.String(http.StatusBadRequest, fmt.Sprintf("Error: %s", err.Error()))
+        return
+    }
+
+    // Lấy danh sách các tệp tin tải lên
+    files := form.File["file"]
+
+    // Tạo thư mục nếu nó chưa tồn tại
+    err = os.MkdirAll(uploadPath, os.ModePerm)
+    if err != nil {
+        c.String(http.StatusInternalServerError, fmt.Sprintf("Error: %s", err.Error()))
+        return
+    }
+
+    // Lặp qua từng tệp tin và lưu vào thư mục "uploads"
+    for _, file := range files {
+        // Mở tệp tin tải lên
+        fileHandle, err := file.Open()
+        defer fileHandle.Close()
+        if err != nil {
+            c.String(http.StatusInternalServerError, fmt.Sprintf("Error: %s", err.Error()))
+            return
+        }
+
+        // Tạo tên tệp duy nhất cho ảnh
+        fileName := fmt.Sprintf("%d-%s", time.Now().UnixNano(), file.Filename)
+        regExp := regexp.MustCompile("[^a-zA-Z0-9.()]+")
+        uniqueFileName := regExp.ReplaceAllString(fileName, "_")
+
+        // Tạo tệp tin trên ổ đĩa và ghi dữ liệu vào nó
+        dst, err := os.Create("/var/www/html/uploads/" + uniqueFileName)
+        defer dst.Close()
+        if err != nil {
+            c.String(http.StatusInternalServerError, fmt.Sprintf("Error: %s", err.Error()))
+            return
+        }
+
+        // Sao chép dữ liệu từ tệp tin tải lên vào tệp tin trên ổ đĩa
+        _, err = io.Copy(dst, fileHandle)
+        if err != nil {
+            c.String(http.StatusInternalServerError, fmt.Sprintf("Error: %s", err.Error()))
+            return
+        }
+
+        urlResponses = append(urlResponses, "https://www.good-shoes.tr29.store/uploads/"+uniqueFileName)
+    }
+
+    c.JSON(http.StatusOK, gin.H{
+        "url":     urlResponses,
+        "message": fmt.Sprintf("upload files successfully"),
     })
 }

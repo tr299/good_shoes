@@ -94,10 +94,27 @@ func (server *Server) setupRoute() {
         log.Fatal("authMiddleware.MiddlewareInit() Error:" + errInit.Error())
     }
 
-    router.POST("/login", authMiddleware.LoginHandler)
+    router.POST(apiPrefix+"/v1/login", authMiddleware.LoginHandler)
 
     authRouter := router.Group("")
     authRouter.Use(authMiddleware.MiddlewareFunc())
+
+    // user
+    authRouter.GET(apiPrefix+"/v1/user", func(c *gin.Context) {
+        user := c.Query("user")
+
+        if user == "admin" {
+            c.JSON(http.StatusOK, gin.H{
+                "name":  "Admin",
+                "email": "admin@good-shoes.tr29.store",
+                "image": "https://www.good-shoes.tr29.store/uploads/1702918213333424600_user.png",
+            })
+        }
+
+        c.JSON(http.StatusBadRequest, gin.H{
+            "message": "User not found",
+        })
+    })
 
     // product module
     productHandler, _ := productService.NewHandler(&server.config, server.database, tracer)
@@ -116,7 +133,7 @@ func (server *Server) setupRoute() {
 
     // upload image
     mediaHandler, _ := mediaService.NewHandler(&server.config, tracer)
-    authRouter.POST(apiPrefix+"/v1/uploads", mediaHandler.UploadFile)
+    authRouter.POST(apiPrefix+"/v1/uploads", mediaHandler.UploadMultipleFile)
 
     server.router = router
 }
