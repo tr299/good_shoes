@@ -109,6 +109,7 @@ func (server *Server) setupRoute() {
                 "email": "admin@good-shoes.tr29.store",
                 "image": "https://www.good-shoes.tr29.store/uploads/1702918213333424600_user.png",
             })
+            return
         }
 
         c.JSON(http.StatusBadRequest, gin.H{
