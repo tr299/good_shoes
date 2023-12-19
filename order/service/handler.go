@@ -87,6 +87,7 @@ func (h *Handler) UpdateSalesOrderStatus(c *gin.Context) {
     if err := validateUpdateOrderStatus(req); nil != err {
         logger.Error(err)
         c.JSON(http.StatusBadRequest, err.Error())
+        return
     }
 
     repo := repository.NewRepository(h.database)
