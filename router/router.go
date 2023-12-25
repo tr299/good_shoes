@@ -14,6 +14,7 @@ import (
     "gorm.io/gorm"
 
     "good_shoes/common/config"
+    inventoryService "good_shoes/inventory/service"
     mediaService "good_shoes/media/service"
     orderService "good_shoes/order/service"
     productService "good_shoes/product/service"
@@ -131,6 +132,11 @@ func (server *Server) setupRoute() {
     router.GET(apiPrefix+"/v1/orders", orderHandler.ListSalesOrder)
     router.GET(apiPrefix+"/v1/orders/:id", orderHandler.GetSalesOrder)
     authRouter.PUT(apiPrefix+"/v1/orders/:id/status", orderHandler.UpdateSalesOrderStatus)
+
+    // inventory module
+    inventoryHandler, _ := inventoryService.NewHandler(&server.config, server.database, tracer)
+    authRouter.PUT(apiPrefix+"/v1/inventory/add", inventoryHandler.Add)
+    authRouter.PUT(apiPrefix+"/v1/inventory/sub", inventoryHandler.Sub)
 
     // upload image
     mediaHandler, _ := mediaService.NewHandler(&server.config, tracer)
