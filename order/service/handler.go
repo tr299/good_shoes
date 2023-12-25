@@ -3,16 +3,18 @@ package service
 import (
     "context"
     "fmt"
+    "net/http"
+
     "github.com/gin-gonic/gin"
     "go.opentelemetry.io/otel/trace"
+    "gorm.io/gorm"
+
+    "good_shoes/common/config"
     "good_shoes/common/model/model_order"
     "good_shoes/common/util"
     "good_shoes/logger"
     "good_shoes/order/repository"
-    "gorm.io/gorm"
-    "net/http"
-
-    "good_shoes/common/config"
+    orderUtil "good_shoes/order/util"
 )
 
 type Handler struct {
@@ -95,6 +97,11 @@ func (h *Handler) UpdateSalesOrderStatus(c *gin.Context) {
     if err != nil {
         c.JSON(http.StatusInternalServerError, err.Error())
         return
+    }
+
+    if req.Status == orderUtil.SalesOrderStatusCompleted {
+        // lấy thông tin order item
+        // Trừ inventory
     }
 
     c.JSON(http.StatusOK, &model_order.UpdateOrderStatusResponse{
