@@ -97,7 +97,9 @@ type UpdateProductRequest struct {
 }
 
 type GetProductByIdRequest struct {
-    Id string `uri:"id"`
+    Id    string `uri:"id"`
+    Size  string `form:"size"`
+    Color string `form:"color"`
 }
 
 type DeleteProductByIdRequest struct {

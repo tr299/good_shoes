@@ -38,5 +38,13 @@ func validateGetProduct(req *model_product.GetProductByIdRequest) error {
         return errors.New("product id is required")
     }
 
+    if len(req.Size) > 0 && len(req.Color) == 0 {
+        return errors.New("product color is required")
+    }
+
+    if len(req.Size) == 0 && len(req.Color) > 0 {
+        return errors.New("product size is required")
+    }
+
     return nil
 }

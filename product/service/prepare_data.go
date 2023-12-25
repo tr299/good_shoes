@@ -2,10 +2,13 @@ package service
 
 import (
     "fmt"
+    "strings"
+    "time"
+
     "github.com/gofrs/uuid"
+
     "good_shoes/common/model/model_product"
     "good_shoes/logger"
-    "time"
 )
 
 func prepareDataToResponseListProduct(o []*model_product.ProductModel) *model_product.ListProductResponse {
@@ -55,13 +58,15 @@ func prepareDataToCreateProduct(req *model_product.CreateProductRequest) *model_
     return data
 }
 
-func prepareDataToCreateVariant(req *model_product.CreateProductRequest, variantName, parentId string) *model_product.ProductModel {
+func prepareDataToCreateVariant(req *model_product.CreateProductRequest, variantName, parentId string, variantNorrameSortOrder []string) *model_product.ProductModel {
     // generate uuid
     uuid, err := uuid.NewV4()
     if err != nil {
         logger.Error(err)
         return nil
     }
+
+    res := strings.Split(variantName, "-")
 
     data := &model_product.ProductModel{
         Id:               fmt.Sprintf("PROD-%v", uuid),
@@ -73,8 +78,8 @@ func prepareDataToCreateVariant(req *model_product.CreateProductRequest, variant
         Description2:     req.Description2,
         Status:           req.Status,
         Type:             req.Type,
-        OptionKey:        "",
-        OptionValue:      "",
+        OptionKey:        "", // Lưu giá trị size
+        OptionValue:      "", // Lưu giá trị color
         Tags:             req.Tag,
         Price:            req.Price,
         SalePrice:        req.SalePrice,
@@ -85,6 +90,17 @@ func prepareDataToCreateVariant(req *model_product.CreateProductRequest, variant
         TotalQuantity:    req.TotalQty,
         Brand:            req.Brand,
         ImageUrl:         req.ImageUrl,
+    }
+
+    if len(res) == len(variantNorrameSortOrder) {
+        for i, s := range variantNorrameSortOrder {
+            if strings.EqualFold(s, "size") {
+                data.OptionKey = res[i]
+            }
+            if strings.EqualFold(s, "color") {
+                data.OptionValue = res[i]
+            }
+        }
     }
 
     createdAt := time.Now()

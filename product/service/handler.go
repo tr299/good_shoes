@@ -66,10 +66,14 @@ func (h *Handler) CreateProduct(c *gin.Context) {
         }
 
         mapOptionNameToId := map[string]string{}
+        mapOptionIdToName := map[string]string{}
         for _, option := range options {
             mapOptionNameToId[option.Name] = option.Id
+            mapOptionIdToName[option.Id] = option.Name
         }
 
+        // thứ tự của variant name => VD: abc-40-Blue -> size = 40, color = Blue
+        var variantNameSortOrder []string
         var listVariantNames []string
         for _, option := range req.Options {
             optionItems, err := repo.CreateProductOptionItems(prepareDataToCreateOptionItems(option.Items, mapOptionNameToId[option.Name]))
@@ -81,20 +85,20 @@ func (h *Handler) CreateProduct(c *gin.Context) {
             mapOptionToNameOptionItems := map[string][]string{}
             for _, item := range optionItems {
                 if len(mapOptionToNameOptionItems[item.OptionId]) > 0 {
-                    mapOptionToNameOptionItems[item.OptionId] = append(mapOptionToNameOptionItems[item.OptionId], item.Value)
+                    mapOptionToNameOptionItems[item.OptionId] = append(mapOptionToNameOptionItems[item.OptionId], item.Label)
                     continue
                 }
-                mapOptionToNameOptionItems[item.OptionId] = []string{item.Value}
+                mapOptionToNameOptionItems[item.OptionId] = []string{item.Label}
             }
-
-            for _, nameOptionItems := range mapOptionToNameOptionItems {
+            for k, nameOptionItems := range mapOptionToNameOptionItems {
+                variantNameSortOrder = append(variantNameSortOrder, mapOptionIdToName[k])
                 listVariantNames = prepareDataToCreateProductVariant(nameOptionItems, listVariantNames)
             }
         }
 
         // create variant product
         for _, variantName := range listVariantNames {
-            _, err := repo.CreateProduct(prepareDataToCreateVariant(req, variantName, product.Id))
+            _, err := repo.CreateProduct(prepareDataToCreateVariant(req, variantName, product.Id, variantNameSortOrder))
             if nil != err {
                 c.JSON(http.StatusInternalServerError, fmt.Sprintf("%v", err))
                 return
@@ -212,7 +216,7 @@ func (h *Handler) GetProduct(c *gin.Context) {
     }
 
     repo := repository.NewRepository(h.database)
-    data, err := repo.GetProductById(req.Id)
+    data, err := repo.GetProductById(req)
     if nil != err {
         c.JSON(http.StatusInternalServerError, fmt.Sprintf("%v", err))
         return

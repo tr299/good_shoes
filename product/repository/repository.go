@@ -60,6 +60,7 @@ func (r *Repository) ListProduct(req *model_product.ListProductRequest) ([]*mode
     query := r.db.Session(&gorm.Session{NewDB: true}).Table("products")
     offset := 0
     limit := 20
+    isVariant := false
     // build filter
     if req.Page > 0 {
         offset = (req.Page - 1) * req.Limit
@@ -71,6 +72,7 @@ func (r *Repository) ListProduct(req *model_product.ListProductRequest) ([]*mode
     }
 
     if len(req.ParentId) > 0 {
+        isVariant = true
         query = query.Where("parent_id = ?", req.ParentId)
     }
 
@@ -94,7 +96,7 @@ func (r *Repository) ListProduct(req *model_product.ListProductRequest) ([]*mode
         query = query.Where("price >= ?", req.MinPrice)
     }
 
-    err := query.Limit(limit).Offset(offset).Find(&products).Error
+    err := query.Where("is_variant = ?", isVariant).Limit(limit).Offset(offset).Find(&products).Error
     if err != nil {
         logger.Error("repository list product failed: ", err)
         return nil, err
@@ -103,15 +105,26 @@ func (r *Repository) ListProduct(req *model_product.ListProductRequest) ([]*mode
     return products, nil
 }
 
-func (r *Repository) GetProductById(id string) (*model_product.ProductModel, error) {
+func (r *Repository) GetProductById(req *model_product.GetProductByIdRequest) (*model_product.ProductModel, error) {
     var products *model_product.ProductModel
-    query := r.db.Session(&gorm.Session{NewDB: true})
-    err := query.Table("products").Where("id = ?", id).First(&products).Error
+    query := r.db.Session(&gorm.Session{NewDB: true}).Table("products")
+    if len(req.Size) == 0 && len(req.Color) == 0 {
+        err := query.Where("id = ?", req.Id).First(&products).Error
+        if err != nil {
+            logger.Error("repository list product failed: ", err)
+            return nil, err
+        }
+        return products, nil
+    }
+
+    query = query.Where("parent_id = ?", req.Id)
+    query = query.Where("option_key = ?", req.Size)
+    query = query.Where("option_value = ?", req.Color)
+    err := query.First(&products).Error
     if err != nil {
         logger.Error("repository list product failed: ", err)
         return nil, err
     }
-
     return products, nil
 }
 
