@@ -18,13 +18,14 @@ func NewRepository(db *gorm.DB) *Repository {
 func (r *Repository) AddQty(req *model_inventory.AddInventoryRequest) error {
     query := r.db.Session(&gorm.Session{NewDB: true}).Table("products")
     query = query.Where("id = ?", req.ProductId)
-    if len(req.ParentId) > 0 {
-        query = query.Or("id = ?", req.ParentId)
-    }
     err := query.Update("total_quantity", gorm.Expr("total_quantity + ?", req.Quantity)).Error
     if err != nil {
-        logger.Error("repository list order failed: ", err)
+        logger.Error("repository add quantity failed: ", err)
         return err
+    }
+
+    if len(req.ParentId) > 0 {
+        r.updateParentQty(req.ParentId)
     }
 
     return nil
@@ -33,14 +34,35 @@ func (r *Repository) AddQty(req *model_inventory.AddInventoryRequest) error {
 func (r *Repository) SubQty(req *model_inventory.SubInventoryRequest) error {
     query := r.db.Session(&gorm.Session{NewDB: true}).Table("products")
     query = query.Where("id = ?", req.ProductId)
-    if len(req.ParentId) > 0 {
-        query = query.Or("id = ?", req.ParentId)
-    }
     err := query.Update("total_quantity", gorm.Expr("total_quantity - ?", req.Quantity)).Error
+    if err != nil {
+        logger.Error("repository sub quantity failed: ", err)
+        return err
+    }
+
+    if len(req.ParentId) > 0 {
+        r.updateParentQty(req.ParentId)
+    }
+
+    return nil
+}
+
+func (r *Repository) updateParentQty(parentId string) error {
+    totalQty := r.getSumVariantQty(parentId)
+    query := r.db.Session(&gorm.Session{NewDB: true}).Table("products")
+    query = query.Where("id = ?", parentId)
+    err := query.Update("total_quantity", totalQty).Error
     if err != nil {
         logger.Error("repository list order failed: ", err)
         return err
     }
 
     return nil
+}
+
+func (r *Repository) getSumVariantQty(parentId string) int {
+    var sum int
+    query := r.db.Session(&gorm.Session{NewDB: true}).Table("products")
+    query.Where("parent_id = ?", parentId).Select("sum(total_quantity)").Row().Scan(&sum)
+    return sum
 }

@@ -30,7 +30,7 @@ func NewHandler(config *config.Config, db *gorm.DB, tracer trace.Tracer) (*Handl
     }, nil
 }
 
-func (h *Handler) Add(c *gin.Context) {
+func (h *Handler) AddHandler(c *gin.Context) {
     newCtx := context.WithValue(c.Request.Context(), "Lang", c.Request.Header.Get(util.LanguageHeaderKey))
     ctx, span := h.tracer.Start(newCtx, "Add")
     defer span.End()
@@ -62,7 +62,7 @@ func (h *Handler) Add(c *gin.Context) {
     })
 }
 
-func (h *Handler) Sub(c *gin.Context) {
+func (h *Handler) SubHandler(c *gin.Context) {
     newCtx := context.WithValue(c.Request.Context(), "Lang", c.Request.Header.Get(util.LanguageHeaderKey))
     ctx, span := h.tracer.Start(newCtx, "Sub")
     defer span.End()
