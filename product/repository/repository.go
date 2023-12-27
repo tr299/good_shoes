@@ -45,6 +45,26 @@ func (r *Repository) UpdateProduct(o *model_product.ProductModel) (*model_produc
     return o, nil
 }
 
+func (r *Repository) UpdateVariant(p *model_product.ProductModel) error {
+    data := map[string]interface{}{
+        "price":        p.Price,
+        "sale_price":   p.SalePrice,
+        "category_ids": p.CategoryIds,
+        "brand":        p.Brand,
+        "tags":         p.Tags,
+    }
+
+    query := r.db.Session(&gorm.Session{NewDB: true}).Table("products").Omit("id,created_at,deleted_at")
+    query = query.Where("is_variant = ?", true)
+    err := query.Where("parent_id = ?", p.Id).Updates(data).Error
+    if err != nil {
+        logger.Error("repository update product failed: ", err)
+        return err
+    }
+
+    return nil
+}
+
 func (r *Repository) DeleteProduct(id string) error {
     query := r.db.Session(&gorm.Session{NewDB: true})
     err := query.Table("products").Where("id = ?", id).UpdateColumn("deleted_at", time.Now()).Error

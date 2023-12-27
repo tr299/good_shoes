@@ -25,7 +25,7 @@ func (r *Repository) AddQty(req *model_inventory.AddInventoryRequest) error {
     }
 
     if len(req.ParentId) > 0 {
-        r.updateParentQty(req.ParentId)
+        r.UpdateParentQty(req.ParentId)
     }
 
     return nil
@@ -41,13 +41,13 @@ func (r *Repository) SubQty(req *model_inventory.SubInventoryRequest) error {
     }
 
     if len(req.ParentId) > 0 {
-        r.updateParentQty(req.ParentId)
+        r.UpdateParentQty(req.ParentId)
     }
 
     return nil
 }
 
-func (r *Repository) updateParentQty(parentId string) error {
+func (r *Repository) UpdateParentQty(parentId string) error {
     totalQty := r.getSumVariantQty(parentId)
     query := r.db.Session(&gorm.Session{NewDB: true}).Table("products")
     query = query.Where("id = ?", parentId)

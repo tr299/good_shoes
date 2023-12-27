@@ -12,6 +12,7 @@ import (
     "good_shoes/common/config"
     "good_shoes/common/model/model_product"
     "good_shoes/common/util"
+    inventoryRepository "good_shoes/inventory/repository"
     "good_shoes/logger"
     "good_shoes/product/repository"
 )
@@ -106,6 +107,12 @@ func (h *Handler) CreateProduct(c *gin.Context) {
         }
     }
 
+    // Sync quantity
+    go func() {
+        inventoryRepo := inventoryRepository.NewRepository(h.database)
+        inventoryRepo.UpdateParentQty(product.Id)
+    }()
+
     c.JSON(http.StatusOK, &model_product.CreateProductResponse{
         ProductId: product.Id,
         Message:   "Create product success",
@@ -137,6 +144,10 @@ func (h *Handler) UpdateProduct(c *gin.Context) {
     if nil != err {
         c.JSON(http.StatusInternalServerError, fmt.Sprintf("%v", err))
     }
+
+    logger.Infof("UpdateProduct -- data.Type = %v", data.Type)
+
+    go repo.UpdateVariant(data)
 
     c.JSON(http.StatusOK, &model_product.CreateProductResponse{
         ProductId: data.Id,
