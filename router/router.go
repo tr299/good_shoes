@@ -135,8 +135,8 @@ func (server *Server) setupRoute() {
 
     // inventory module
     inventoryHandler, _ := inventoryService.NewHandler(&server.config, server.database, tracer)
-    authRouter.PUT(apiPrefix+"/v1/inventory/add", inventoryHandler.Add)
-    authRouter.PUT(apiPrefix+"/v1/inventory/sub", inventoryHandler.Sub)
+    authRouter.PUT(apiPrefix+"/v1/inventory/add", inventoryHandler.AddHandler)
+    authRouter.PUT(apiPrefix+"/v1/inventory/sub", inventoryHandler.SubHandler)
 
     // upload image
     mediaHandler, _ := mediaService.NewHandler(&server.config, tracer)
