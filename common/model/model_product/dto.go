@@ -52,7 +52,7 @@ type ProductModel struct {
     CategoryIds      string
     CheckInventory   bool
     MultipleVariants bool
-    TotalQuantity    uint32
+    TotalQuantity    int64
     Brand            string
     ImageUrl         string
 
