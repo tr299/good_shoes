@@ -27,13 +27,21 @@ func (r *Repository) ListOrder(req *model_order.ListSalesOrderRequest) ([]*model
 
     query := r.db.Session(&gorm.Session{NewDB: true}).Table("sales_orders")
 
-    err := query.Limit(limit).Offset(offset).Find(&orders).Error
+    err := query.Limit(limit).Offset(offset).Order("created_at desc").Find(&orders).Error
     if err != nil {
         logger.Error("repository list order failed: ", err)
         return nil, err
     }
 
     return orders, nil
+}
+
+func (r *Repository) Count() int64 {
+    var count int64
+    query := r.db.Session(&gorm.Session{NewDB: true}).Table("sales_orders")
+    query = query.Count(&count)
+
+    return count
 }
 
 func (r *Repository) GetOrderById(id string) (*model_order.SalesOrderModel, error) {

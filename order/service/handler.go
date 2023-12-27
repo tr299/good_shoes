@@ -134,7 +134,9 @@ func (h *Handler) ListSalesOrder(c *gin.Context) {
         return
     }
 
-    data := prepareDataToResponseListSalesOrder(result)
+    totalOrder := repo.Count()
+
+    data := prepareDataToResponseListSalesOrder(result, totalOrder)
     c.JSON(http.StatusOK, data)
 }
 

@@ -8,14 +8,17 @@ import (
     "time"
 )
 
-func prepareDataToResponseListSalesOrder(o []*model_order.SalesOrderModel) *model_order.ListSalesOrderResponse {
+func prepareDataToResponseListSalesOrder(o []*model_order.SalesOrderModel, totalOrder int64) *model_order.ListSalesOrderResponse {
     var items []model_order.SalesOrder
 
     for _, p := range o {
         items = append(items, *model_order.ConvertSalesOrderModelToSalesOrderResponse(p))
     }
 
-    return &model_order.ListSalesOrderResponse{Items: items}
+    return &model_order.ListSalesOrderResponse{
+        Total: totalOrder,
+        Items: items,
+    }
 }
 
 func prepareDataToResponseGetSalesOrder(order *model_order.SalesOrderModel, orderItems []*model_order.SalesOrderItemModel) *model_order.SalesOrderDetail {

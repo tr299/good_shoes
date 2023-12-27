@@ -125,6 +125,7 @@ type SalesOrderDetail struct {
 }
 
 type ListSalesOrderResponse struct {
+    Total int64        `json:"total"`
     Items []SalesOrder `json:"items"`
 }
 
