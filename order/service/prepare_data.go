@@ -45,9 +45,11 @@ func prepareDataToCreateSalesOrder(req *model_order.CreateSalesOrderRequest) *mo
         return nil
     }
 
+    randomString := uuid.String()[:15]
+
     data := &model_order.SalesOrderModel{
         Id:                   fmt.Sprintf("ORD-%v", uuid),
-        OrderNumber:          req.OrderNumber,
+        OrderNumber:          fmt.Sprintf("Order-%v", randomString),
         Status:               req.Status,
         PaymentStatus:        req.PaymentStatus,
         FulfillmentStatus:    req.FulfillmentStatus,
