@@ -40,7 +40,7 @@ func prepareDataToCreateProduct(req *model_product.CreateProductRequest) *model_
         Description:      req.Description,
         Description2:     req.Description2,
         Status:           req.Status,
-        Type:             req.Type,
+        Type:             "simple",
         OptionKey:        "",
         OptionValue:      "",
         Tags:             req.Tag,
@@ -53,6 +53,10 @@ func prepareDataToCreateProduct(req *model_product.CreateProductRequest) *model_
         TotalQuantity:    req.TotalQty,
         Brand:            req.Brand,
         ImageUrl:         req.ImageUrl,
+    }
+
+    if len(req.Options) > 0 {
+        data.Type = "configurable"
     }
 
     createdAt := time.Now()
@@ -80,7 +84,7 @@ func prepareDataToCreateVariant(req *model_product.CreateProductRequest, variant
         Description:      req.Description,
         Description2:     req.Description2,
         Status:           req.Status,
-        Type:             req.Type,
+        Type:             "variant",
         OptionKey:        "", // Lưu giá trị size
         OptionValue:      "", // Lưu giá trị color
         Tags:             req.Tag,
