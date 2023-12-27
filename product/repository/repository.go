@@ -2,6 +2,7 @@ package repository
 
 import (
     "errors"
+    "fmt"
     "time"
 
     "gorm.io/gorm"
@@ -57,10 +58,10 @@ func (r *Repository) DeleteProduct(id string) error {
 
 func (r *Repository) ListProduct(req *model_product.ListProductRequest) ([]*model_product.ProductModel, error) {
     var products []*model_product.ProductModel
-    query := r.db.Session(&gorm.Session{NewDB: true}).Table("products")
     offset := 0
     limit := 20
     isVariant := false
+    query := r.db.Session(&gorm.Session{NewDB: true}).Table("products")
     // build filter
     if req.Page > 0 {
         offset = (req.Page - 1) * req.Limit
@@ -96,13 +97,61 @@ func (r *Repository) ListProduct(req *model_product.ListProductRequest) ([]*mode
         query = query.Where("price >= ?", req.MinPrice)
     }
 
-    err := query.Where("is_variant = ?", isVariant).Limit(limit).Offset(offset).Find(&products).Error
+    if len(req.Search) > 0 {
+        query = query.Where("name like ?", fmt.Sprintf("%%%v%%", req.Search))
+    }
+
+    query = query.Where("is_variant = ?", isVariant)
+    err := query.Limit(limit).Offset(offset).Order("created_at desc").Find(&products).Error
     if err != nil {
         logger.Error("repository list product failed: ", err)
         return nil, err
     }
 
     return products, nil
+}
+
+func (r *Repository) Count(req *model_product.ListProductRequest) int64 {
+    var count int64
+    isVariant := false
+    query := r.db.Session(&gorm.Session{NewDB: true}).Table("products")
+
+    if req.InStockOnly {
+        query = query.Where("total_quantity > 0")
+    }
+
+    if len(req.ParentId) > 0 {
+        isVariant = true
+        query = query.Where("parent_id = ?", req.ParentId)
+    }
+
+    if len(req.Brand) > 0 {
+        query = query.Where("brand = ?", req.Brand)
+    }
+
+    if len(req.Tag) > 0 {
+        query = query.Where("tags = ?", req.Tag)
+    }
+
+    if len(req.Category) > 0 {
+        query = query.Where("category_ids = ?", req.Category)
+    }
+
+    if req.MaxPrice > 0 {
+        query = query.Where("price <= ?", req.MaxPrice)
+    }
+
+    if req.MinPrice > 0 {
+        query = query.Where("price >= ?", req.MinPrice)
+    }
+
+    if len(req.Search) > 0 {
+        query = query.Where("name like ?", fmt.Sprintf("%%%v%%", req.Search))
+    }
+
+    query = query.Where("is_variant = ?", isVariant).Count(&count)
+
+    return count
 }
 
 func (r *Repository) GetProductById(req *model_product.GetProductByIdRequest) (*model_product.ProductModel, error) {

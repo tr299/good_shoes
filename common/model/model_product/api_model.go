@@ -10,9 +10,11 @@ type ListProductRequest struct {
     ParentId    string  `form:"parent_id"`
     Page        int     `form:"page"`
     Limit       int     `form:"limit"`
+    Search      string  `form:"search"`
 }
 
 type ListProductResponse struct {
+    Total int64         `json:"total"`
     Items []ProductItem `json:"items"`
 }
 

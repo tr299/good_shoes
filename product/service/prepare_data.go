@@ -11,14 +11,17 @@ import (
     "good_shoes/logger"
 )
 
-func prepareDataToResponseListProduct(o []*model_product.ProductModel) *model_product.ListProductResponse {
+func prepareDataToResponseListProduct(o []*model_product.ProductModel, totalProduct int64) *model_product.ListProductResponse {
     var items []model_product.ProductItem
 
     for _, p := range o {
         items = append(items, *model_product.ConvertProductModelToProductResponse(p))
     }
 
-    return &model_product.ListProductResponse{Items: items}
+    return &model_product.ListProductResponse{
+        Total: totalProduct,
+        Items: items,
+    }
 }
 
 func prepareDataToCreateProduct(req *model_product.CreateProductRequest) *model_product.ProductModel {

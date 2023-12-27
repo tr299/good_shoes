@@ -191,7 +191,9 @@ func (h *Handler) ListProduct(c *gin.Context) {
         return
     }
 
-    data := prepareDataToResponseListProduct(result)
+    totalProduct := repo.Count(req)
+
+    data := prepareDataToResponseListProduct(result, totalProduct)
     c.JSON(http.StatusOK, data)
 }
 
