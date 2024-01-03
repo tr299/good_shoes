@@ -2,6 +2,7 @@ package repository
 
 import (
     "errors"
+    "fmt"
     "good_shoes/common/model/model_order"
     "good_shoes/logger"
     "gorm.io/gorm"
@@ -20,12 +21,16 @@ func (r *Repository) ListOrder(req *model_order.ListSalesOrderRequest) ([]*model
     offset := 0
     limit := 20
 
-    if req.Page > 0 {
+    query := r.db.Session(&gorm.Session{NewDB: true}).Table("sales_orders")
+
+    if len(req.Search) > 0 {
+        query = query.Where("order_number like ?", fmt.Sprintf("%%%v%%", req.Search))
+    }
+
+    if req.Page > 0 && len(req.Search) == 0 {
         offset = (req.Page - 1) * req.Limit
         limit = req.Limit
     }
-
-    query := r.db.Session(&gorm.Session{NewDB: true}).Table("sales_orders")
 
     err := query.Limit(limit).Offset(offset).Order("created_at desc").Find(&orders).Error
     if err != nil {

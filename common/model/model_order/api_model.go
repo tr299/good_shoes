@@ -26,7 +26,7 @@ type SalesOrderItem struct {
     // Price
     Price               float64 `json:"price"`
     PriceInclTax        float64 `json:"price_incl_tax"`
-    CustomPrice         float64 `json:"custom_price"`
+    CustomPrice         float64 `json:"sale_price"`
     CustomPriceInclTax  float64 `json:"custom_price_incl_tax"`
     SpecialPrice        float64 `json:"special_price"`
     SpecialPriceInclTax float64 `json:"special_price_incl_tax"`
@@ -130,8 +130,9 @@ type ListSalesOrderResponse struct {
 }
 
 type ListSalesOrderRequest struct {
-    Page  int `form:"page"`
-    Limit int `form:"limit"`
+    Page   int    `form:"page"`
+    Limit  int    `form:"limit"`
+    Search string `form:"search"`
 }
 
 type GetOrderByIdRequest struct {

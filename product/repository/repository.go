@@ -83,7 +83,7 @@ func (r *Repository) ListProduct(req *model_product.ListProductRequest) ([]*mode
     isVariant := false
     query := r.db.Session(&gorm.Session{NewDB: true}).Table("products")
     // build filter
-    if req.Page > 0 {
+    if req.Page > 0 && len(req.Search) == 0 {
         offset = (req.Page - 1) * req.Limit
         limit = req.Limit
     }
