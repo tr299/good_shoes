@@ -58,8 +58,17 @@ func (h *Handler) CreateProduct(c *gin.Context) {
         return
     }
 
+    isSimpleProduct := true
+    for _, option := range req.Options {
+        if len(option.Items) == 0 {
+            isSimpleProduct = true
+            break
+        }
+        isSimpleProduct = false
+    }
+
     // create option
-    if len(req.Options) > 0 {
+    if !isSimpleProduct {
         options, err := repo.CreateProductOptions(prepareDataToCreateOptions(req.Options, product.Id))
         if nil != err {
             c.JSON(http.StatusInternalServerError, fmt.Sprintf("%v", err))

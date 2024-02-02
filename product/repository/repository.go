@@ -169,6 +169,7 @@ func (r *Repository) Count(req *model_product.ListProductRequest) int64 {
         query = query.Where("name like ?", fmt.Sprintf("%%%v%%", req.Search))
     }
 
+    query = query.Where("deleted_at is null")
     query = query.Where("is_variant = ?", isVariant).Count(&count)
 
     return count
